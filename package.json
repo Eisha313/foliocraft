@@ -1,0 +1,40 @@
+{
+  "name": "foliocraft",
+  "version": "1.0.0",
+  "description": "A lightweight JavaScript library for building interactive, responsive portfolio sections with zero dependencies",
+  "main": "dist/foliocraft.js",
+  "module": "src/index.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/build.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "portfolio",
+    "components",
+    "responsive",
+    "animation",
+    "ui",
+    "zero-dependency"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
