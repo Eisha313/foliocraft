@@ -1,133 +1,200 @@
-/**
- * ScrollAnimator - Handles Intersection Observer-based scroll animations
- * @module ScrollAnimator
- */
+import EventEmitter from './EventEmitter.js';
 
 /**
- * Generate unique IDs for elements
- * @returns {string} Unique identifier
+ * ScrollAnimator - Intersection Observer-powered scroll animations
+ * Handles reveal effects when elements enter the viewport
  */
-const generateId = () => `fc-${Math.random().toString(36).substr(2, 9)}`;
-
-/**
- * ScrollAnimator class for reveal animations
- */
-export class ScrollAnimator {
-  /**
-   * Create a ScrollAnimator instance
-   * @param {Object} options - Animation options
-   */
+class ScrollAnimator extends EventEmitter {
   constructor(options = {}) {
+    super();
+    
     this.options = {
-      enabled: true,
-      threshold: 0.1,
-      rootMargin: '0px',
-      ...options
+      root: null,
+      rootMargin: options.rootMargin || '0px',
+      threshold: options.threshold || 0.1,
+      animationClass: options.animationClass || 'fc-revealed',
+      once: options.once !== false
     };
     
     this.observer = null;
     this.observedElements = new Set();
+    this.isInitialized = false;
     
-    if (this.options.enabled) {
-      this._initObserver();
-    }
+    // Bind methods to preserve context
+    this.handleIntersection = this.handleIntersection.bind(this);
   }
-
+  
   /**
    * Initialize the Intersection Observer
-   * @private
    */
-  _initObserver() {
-    if (typeof IntersectionObserver === 'undefined') {
-      console.warn('FolioCraft: IntersectionObserver not supported');
-      return;
+  init() {
+    if (this.isInitialized) {
+      return this;
     }
-
-    this.observer = new IntersectionObserver(
-      (entries) => this._handleIntersection(entries),
-      {
-        threshold: this.options.threshold,
-        rootMargin: this.options.rootMargin
-      }
-    );
+    
+    if (typeof IntersectionObserver === 'undefined') {
+      console.warn('ScrollAnimator: IntersectionObserver not supported');
+      this.revealAllElements();
+      return this;
+    }
+    
+    this.observer = new IntersectionObserver(this.handleIntersection, {
+      root: this.options.root,
+      rootMargin: this.options.rootMargin,
+      threshold: this.options.threshold
+    });
+    
+    this.isInitialized = true;
+    this.emit('init');
+    
+    return this;
   }
-
+  
   /**
    * Handle intersection changes
-   * @private
-   * @param {IntersectionObserverEntry[]} entries - Observer entries
+   * @param {IntersectionObserverEntry[]} entries
    */
-  _handleIntersection(entries) {
+  handleIntersection(entries) {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('fc-visible');
+        this.revealElement(entry.target);
         
-        // Trigger custom callback if defined
-        const callback = entry.target._fcRevealCallback;
-        if (typeof callback === 'function') {
-          callback(entry.target);
-        }
-        
-        // Optionally unobserve after reveal
-        if (entry.target.dataset.fcRevealOnce !== 'false') {
+        if (this.options.once) {
           this.unobserve(entry.target);
         }
-      } else if (entry.target.dataset.fcRevealOnce === 'false') {
-        entry.target.classList.remove('fc-visible');
+      } else if (!this.options.once) {
+        this.hideElement(entry.target);
       }
     });
   }
-
+  
   /**
-   * Observe an element for scroll-triggered reveal
-   * @param {HTMLElement} element - Element to observe
-   * @param {Object} options - Reveal options
+   * Observe an element for scroll animations
+   * @param {HTMLElement} element
+   * @param {Object} customOptions
    */
-  observe(element, options = {}) {
-    if (!this.observer || !element) return;
-    
-    // Add reveal class for initial hidden state
-    element.classList.add('fc-reveal');
-    
-    // Store callback if provided
-    if (options.onReveal) {
-      element._fcRevealCallback = options.onReveal;
+  observe(element, customOptions = {}) {
+    if (!element || !(element instanceof HTMLElement)) {
+      console.warn('ScrollAnimator: Invalid element provided');
+      return this;
     }
     
-    // Set reveal-once behavior
-    if (options.revealOnce === false) {
-      element.dataset.fcRevealOnce = 'false';
+    if (!this.isInitialized) {
+      this.init();
     }
     
-    // Apply custom delay if specified
-    if (options.delay) {
-      element.style.transitionDelay = `${options.delay}ms`;
+    if (!this.observer) {
+      this.revealElement(element);
+      return this;
     }
+    
+    // Store custom options on the element
+    element._fcScrollOptions = customOptions;
+    
+    // Add initial hidden state
+    element.classList.add('fc-scroll-target');
     
     this.observer.observe(element);
     this.observedElements.add(element);
+    
+    this.emit('observe', { element });
+    
+    return this;
   }
-
+  
   /**
    * Stop observing an element
-   * @param {HTMLElement} element - Element to unobserve
+   * @param {HTMLElement} element
    */
   unobserve(element) {
-    if (!this.observer || !element) return;
+    if (!element || !this.observer) {
+      return this;
+    }
     
     this.observer.unobserve(element);
     this.observedElements.delete(element);
+    
+    // Clean up custom options
+    delete element._fcScrollOptions;
+    
+    this.emit('unobserve', { element });
+    
+    return this;
   }
-
+  
   /**
-   * Disconnect observer and cleanup
+   * Observe multiple elements
+   * @param {NodeList|Array} elements
+   * @param {Object} customOptions
    */
-  disconnect() {
+  observeAll(elements, customOptions = {}) {
+    const elementArray = Array.from(elements);
+    elementArray.forEach(el => this.observe(el, customOptions));
+    return this;
+  }
+  
+  /**
+   * Reveal an element with animation
+   * @param {HTMLElement} element
+   */
+  revealElement(element) {
+    const options = element._fcScrollOptions || {};
+    const animationClass = options.animationClass || this.options.animationClass;
+    const delay = options.delay || 0;
+    
+    if (delay > 0) {
+      setTimeout(() => {
+        element.classList.add(animationClass);
+      }, delay);
+    } else {
+      element.classList.add(animationClass);
+    }
+    
+    this.emit('reveal', { element });
+  }
+  
+  /**
+   * Hide an element (reverse animation)
+   * @param {HTMLElement} element
+   */
+  hideElement(element) {
+    const options = element._fcScrollOptions || {};
+    const animationClass = options.animationClass || this.options.animationClass;
+    
+    element.classList.remove(animationClass);
+    
+    this.emit('hide', { element });
+  }
+  
+  /**
+   * Reveal all observed elements (fallback for no IntersectionObserver)
+   */
+  revealAllElements() {
+    this.observedElements.forEach(element => {
+      this.revealElement(element);
+    });
+  }
+  
+  /**
+   * Clean up and disconnect observer
+   */
+  destroy() {
     if (this.observer) {
       this.observer.disconnect();
-      this.observedElements.clear();
+      this.observer = null;
     }
+    
+    // Clean up custom options from all observed elements
+    this.observedElements.forEach(element => {
+      delete element._fcScrollOptions;
+    });
+    
+    this.observedElements.clear();
+    this.isInitialized = false;
+    this.removeAllListeners();
+    
+    this.emit('destroy');
   }
 }
 
-export { generateId };
+export default ScrollAnimator;

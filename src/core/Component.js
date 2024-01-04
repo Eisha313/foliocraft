@@ -1,173 +1,245 @@
-import { EventEmitter } from './EventEmitter.js';
+import EventEmitter from './EventEmitter.js';
 
 /**
- * Base Component class for all FolioCraft UI components
- * Provides lifecycle management, event handling, and DOM utilities
+ * Component - Base class for all FolioCraft UI components
+ * Provides lifecycle management and common utilities
  */
-export class Component extends EventEmitter {
-    /**
-     * Create a new component
-     * @param {HTMLElement|string} container - Container element or selector
-     * @param {Object} options - Component configuration
-     */
-    constructor(container, options = {}) {
-        super();
-        
-        this.container = typeof container === 'string'
-            ? document.querySelector(container)
-            : container;
-
-        if (!this.container) {
-            throw new Error('FolioCraft: Invalid container element');
-        }
-
-        this.options = this._mergeOptions(this.constructor.defaults || {}, options);
-        this.state = {};
-        this._mounted = false;
-        this._elements = new Map();
-
-        this._init();
+class Component extends EventEmitter {
+  constructor(element, options = {}) {
+    super();
+    
+    // Support both element reference and selector
+    if (typeof element === 'string') {
+      this.element = document.querySelector(element);
+    } else {
+      this.element = element;
     }
-
-    /**
-     * Deep merge default options with user options
-     * @private
-     */
-    _mergeOptions(defaults, options) {
-        const result = { ...defaults };
-        
-        for (const key in options) {
-            if (options[key] !== null && typeof options[key] === 'object' && !Array.isArray(options[key])) {
-                result[key] = this._mergeOptions(defaults[key] || {}, options[key]);
-            } else {
-                result[key] = options[key];
-            }
-        }
-        
-        return result;
+    
+    if (!this.element) {
+      throw new Error('Component: Valid element or selector required');
     }
-
-    /**
-     * Initialize component - override in subclasses
-     * @private
-     */
-    _init() {
-        this.emit('beforeInit');
-        this.render();
-        this._bindEvents();
-        this._mounted = true;
-        this.emit('init');
+    
+    this.options = { ...this.constructor.defaults, ...options };
+    this.isInitialized = false;
+    this.isDestroyed = false;
+    this.boundHandlers = new Map();
+    
+    // Store instance reference on element for later retrieval
+    this.element._fcComponent = this;
+  }
+  
+  /**
+   * Default options (override in subclasses)
+   */
+  static get defaults() {
+    return {};
+  }
+  
+  /**
+   * Initialize the component
+   */
+  init() {
+    if (this.isInitialized || this.isDestroyed) {
+      return this;
     }
-
-    /**
-     * Render component - override in subclasses
-     */
-    render() {
-        // Override in subclasses
+    
+    this.render();
+    this.bindEvents();
+    this.isInitialized = true;
+    
+    this.emit('init', { component: this });
+    
+    return this;
+  }
+  
+  /**
+   * Render the component (override in subclasses)
+   */
+  render() {
+    // Base implementation - override in subclasses
+  }
+  
+  /**
+   * Bind event listeners (override in subclasses)
+   */
+  bindEvents() {
+    // Base implementation - override in subclasses
+  }
+  
+  /**
+   * Unbind event listeners (override in subclasses)
+   */
+  unbindEvents() {
+    // Clean up all bound handlers
+    this.boundHandlers.forEach((handler, key) => {
+      const [element, event] = key.split(':');
+      const targetElement = element === 'element' ? this.element : document.querySelector(element);
+      if (targetElement) {
+        targetElement.removeEventListener(event, handler);
+      }
+    });
+    this.boundHandlers.clear();
+  }
+  
+  /**
+   * Add an event listener with automatic cleanup tracking
+   * @param {HTMLElement} element - Target element
+   * @param {string} event - Event name
+   * @param {Function} handler - Event handler
+   * @param {Object} options - Event listener options
+   */
+  addBoundListener(element, event, handler, options = {}) {
+    if (!element || !event || !handler) {
+      return this;
     }
-
-    /**
-     * Bind DOM events - override in subclasses
-     * @private
-     */
-    _bindEvents() {
-        // Override in subclasses
+    
+    const boundHandler = handler.bind(this);
+    const key = `${element === this.element ? 'element' : element.className || 'custom'}:${event}`;
+    
+    element.addEventListener(event, boundHandler, options);
+    this.boundHandlers.set(key, { element, event, handler: boundHandler, options });
+    
+    return this;
+  }
+  
+  /**
+   * Remove a specific bound listener
+   * @param {string} key - The key used when adding the listener
+   */
+  removeBoundListener(key) {
+    const binding = this.boundHandlers.get(key);
+    if (binding) {
+      binding.element.removeEventListener(binding.event, binding.handler, binding.options);
+      this.boundHandlers.delete(key);
     }
-
-    /**
-     * Update component state and re-render if needed
-     * @param {Object} newState - State updates
-     */
-    setState(newState) {
-        const prevState = { ...this.state };
-        this.state = { ...this.state, ...newState };
-        this.emit('stateChange', this.state, prevState);
-        
-        if (this._mounted) {
-            this.update();
-        }
+    return this;
+  }
+  
+  /**
+   * Update component options
+   * @param {Object} newOptions
+   */
+  setOptions(newOptions) {
+    this.options = { ...this.options, ...newOptions };
+    this.emit('optionsChange', { options: this.options });
+    return this;
+  }
+  
+  /**
+   * Add CSS classes to the element
+   * @param {...string} classes
+   */
+  addClass(...classes) {
+    this.element.classList.add(...classes);
+    return this;
+  }
+  
+  /**
+   * Remove CSS classes from the element
+   * @param {...string} classes
+   */
+  removeClass(...classes) {
+    this.element.classList.remove(...classes);
+    return this;
+  }
+  
+  /**
+   * Toggle CSS class on the element
+   * @param {string} className
+   * @param {boolean} force
+   */
+  toggleClass(className, force) {
+    this.element.classList.toggle(className, force);
+    return this;
+  }
+  
+  /**
+   * Set element attribute
+   * @param {string} name
+   * @param {string} value
+   */
+  setAttribute(name, value) {
+    this.element.setAttribute(name, value);
+    return this;
+  }
+  
+  /**
+   * Get element attribute
+   * @param {string} name
+   */
+  getAttribute(name) {
+    return this.element.getAttribute(name);
+  }
+  
+  /**
+   * Query within component element
+   * @param {string} selector
+   */
+  find(selector) {
+    return this.element.querySelector(selector);
+  }
+  
+  /**
+   * Query all within component element
+   * @param {string} selector
+   */
+  findAll(selector) {
+    return this.element.querySelectorAll(selector);
+  }
+  
+  /**
+   * Show the component
+   */
+  show() {
+    this.element.style.display = '';
+    this.element.removeAttribute('hidden');
+    this.emit('show');
+    return this;
+  }
+  
+  /**
+   * Hide the component
+   */
+  hide() {
+    this.element.style.display = 'none';
+    this.element.setAttribute('hidden', '');
+    this.emit('hide');
+    return this;
+  }
+  
+  /**
+   * Destroy the component and clean up
+   */
+  destroy() {
+    if (this.isDestroyed) {
+      return;
     }
-
-    /**
-     * Update component after state change - override in subclasses
-     */
-    update() {
-        // Override in subclasses
+    
+    this.emit('beforeDestroy', { component: this });
+    
+    this.unbindEvents();
+    this.removeAllListeners();
+    
+    // Clean up element reference
+    if (this.element) {
+      delete this.element._fcComponent;
     }
-
-    /**
-     * Create an element with optional attributes and children
-     * @param {string} tag - HTML tag name
-     * @param {Object} attrs - Element attributes
-     * @param {...(string|HTMLElement)} children - Child elements or text
-     * @returns {HTMLElement}
-     */
-    createElement(tag, attrs = {}, ...children) {
-        const element = document.createElement(tag);
-        
-        for (const [key, value] of Object.entries(attrs)) {
-            if (key === 'className') {
-                element.className = value;
-            } else if (key === 'dataset') {
-                Object.assign(element.dataset, value);
-            } else if (key.startsWith('on') && typeof value === 'function') {
-                element.addEventListener(key.slice(2).toLowerCase(), value);
-            } else {
-                element.setAttribute(key, value);
-            }
-        }
-
-        children.forEach(child => {
-            if (typeof child === 'string') {
-                element.appendChild(document.createTextNode(child));
-            } else if (child instanceof HTMLElement) {
-                element.appendChild(child);
-            }
-        });
-
-        return element;
-    }
-
-    /**
-     * Query element within container and cache reference
-     * @param {string} selector - CSS selector
-     * @param {string} [key] - Cache key
-     * @returns {HTMLElement|null}
-     */
-    $(selector, key) {
-        if (key && this._elements.has(key)) {
-            return this._elements.get(key);
-        }
-        
-        const element = this.container.querySelector(selector);
-        
-        if (key && element) {
-            this._elements.set(key, element);
-        }
-        
-        return element;
-    }
-
-    /**
-     * Query all elements within container
-     * @param {string} selector - CSS selector
-     * @returns {NodeList}
-     */
-    $$(selector) {
-        return this.container.querySelectorAll(selector);
-    }
-
-    /**
-     * Destroy component and cleanup
-     */
-    destroy() {
-        this.emit('beforeDestroy');
-        this._elements.clear();
-        this.removeAllListeners();
-        this.container.innerHTML = '';
-        this._mounted = false;
-        this.emit('destroy');
-    }
+    
+    this.isInitialized = false;
+    this.isDestroyed = true;
+    this.element = null;
+    this.options = null;
+    
+    this.emit('destroy');
+  }
+  
+  /**
+   * Get component instance from element
+   * @param {HTMLElement} element
+   */
+  static getInstance(element) {
+    return element?._fcComponent || null;
+  }
 }
 
 export default Component;
