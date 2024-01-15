@@ -1,209 +1,230 @@
+import EventEmitter from '../core/EventEmitter.js';
+
 /**
- * BreakpointManager - Handles responsive breakpoint detection and callbacks
- * Provides customizable thresholds and media query management
+ * BreakpointManager - Handle responsive breakpoints
+ * Provides customizable thresholds and change detection
  */
-
-import { EventEmitter } from '../core/EventEmitter.js';
-
-const DEFAULT_BREAKPOINTS = {
-  xs: 0,
-  sm: 576,
-  md: 768,
-  lg: 992,
-  xl: 1200,
-  xxl: 1400
-};
-
-export class BreakpointManager extends EventEmitter {
-  constructor(options = {}) {
-    super();
+class BreakpointManager extends EventEmitter {
+    constructor(options = {}) {
+        super();
+        
+        this.breakpoints = options.breakpoints || {
+            xs: 0,
+            sm: 576,
+            md: 768,
+            lg: 992,
+            xl: 1200,
+            xxl: 1400
+        };
+        
+        this.currentBreakpoint = null;
+        this.currentWidth = 0;
+        this.mediaQueries = new Map();
+        this.isDestroyed = false;
+        
+        this._boundHandleResize = this._handleResize.bind(this);
+        this._init();
+    }
     
-    this.breakpoints = { ...DEFAULT_BREAKPOINTS, ...options.breakpoints };
-    this.currentBreakpoint = null;
-    this.mediaQueries = new Map();
-    this.initialized = false;
-  }
-
-  /**
-   * Initialize the breakpoint manager
-   */
-  init() {
-    if (this.initialized) return this;
+    _init() {
+        this._setupMediaQueries();
+        this._updateCurrentBreakpoint();
+    }
     
-    this._setupMediaQueries();
-    this._detectCurrentBreakpoint();
-    this.initialized = true;
+    _setupMediaQueries() {
+        const sortedBreakpoints = this._getSortedBreakpoints();
+        
+        sortedBreakpoints.forEach((bp, index) => {
+            const minWidth = this.breakpoints[bp];
+            const nextBp = sortedBreakpoints[index + 1];
+            const maxWidth = nextBp ? this.breakpoints[nextBp] - 1 : null;
+            
+            let query;
+            if (maxWidth) {
+                query = `(min-width: ${minWidth}px) and (max-width: ${maxWidth}px)`;
+            } else {
+                query = `(min-width: ${minWidth}px)`;
+            }
+            
+            const mql = window.matchMedia(query);
+            
+            const handler = (e) => {
+                if (this.isDestroyed) return;
+                if (e.matches) {
+                    this._setBreakpoint(bp);
+                }
+            };
+            
+            // Use the modern API if available, fall back to deprecated addListener
+            if (mql.addEventListener) {
+                mql.addEventListener('change', handler);
+            } else {
+                mql.addListener(handler);
+            }
+            
+            this.mediaQueries.set(bp, { mql, handler });
+        });
+    }
     
-    return this;
-  }
-
-  /**
-   * Set up media query listeners for each breakpoint
-   * @private
-   */
-  _setupMediaQueries() {
-    const sortedBreakpoints = this._getSortedBreakpoints();
+    _getSortedBreakpoints() {
+        return Object.keys(this.breakpoints)
+            .sort((a, b) => this.breakpoints[a] - this.breakpoints[b]);
+    }
     
-    sortedBreakpoints.forEach((bp, index) => {
-      const minWidth = this.breakpoints[bp];
-      const nextBp = sortedBreakpoints[index + 1];
-      const maxWidth = nextBp ? this.breakpoints[nextBp] - 1 : null;
-      
-      let query;
-      if (maxWidth) {
-        query = `(min-width: ${minWidth}px) and (max-width: ${maxWidth}px)`;
-      } else {
-        query = `(min-width: ${minWidth}px)`;
-      }
-      
-      const mql = window.matchMedia(query);
-      
-      const handler = (e) => {
-        if (e.matches) {
-          this._handleBreakpointChange(bp);
+    _updateCurrentBreakpoint() {
+        if (this.isDestroyed) return;
+        
+        this.currentWidth = window.innerWidth;
+        const sortedBreakpoints = this._getSortedBreakpoints();
+        
+        for (let i = sortedBreakpoints.length - 1; i >= 0; i--) {
+            const bp = sortedBreakpoints[i];
+            if (this.currentWidth >= this.breakpoints[bp]) {
+                this._setBreakpoint(bp);
+                break;
+            }
         }
-      };
-      
-      // Use addEventListener for modern browsers
-      if (mql.addEventListener) {
-        mql.addEventListener('change', handler);
-      } else {
-        // Fallback for older browsers
-        mql.addListener(handler);
-      }
-      
-      this.mediaQueries.set(bp, { mql, handler, query });
-    });
-  }
-
-  /**
-   * Get breakpoints sorted by value ascending
-   * @private
-   * @returns {string[]} Sorted breakpoint names
-   */
-  _getSortedBreakpoints() {
-    return Object.keys(this.breakpoints)
-      .sort((a, b) => this.breakpoints[a] - this.breakpoints[b]);
-  }
-
-  /**
-   * Detect the current breakpoint on initialization
-   * @private
-   */
-  _detectCurrentBreakpoint() {
-    const width = window.innerWidth;
-    const sortedBreakpoints = this._getSortedBreakpoints();
-    
-    for (let i = sortedBreakpoints.length - 1; i >= 0; i--) {
-      const bp = sortedBreakpoints[i];
-      if (width >= this.breakpoints[bp]) {
-        this.currentBreakpoint = bp;
-        break;
-      }
     }
     
-    this.emit('init', { breakpoint: this.currentBreakpoint, width });
-  }
-
-  /**
-   * Handle breakpoint change
-   * @private
-   * @param {string} newBreakpoint - The new breakpoint name
-   */
-  _handleBreakpointChange(newBreakpoint) {
-    const previousBreakpoint = this.currentBreakpoint;
-    
-    if (newBreakpoint !== previousBreakpoint) {
-      this.currentBreakpoint = newBreakpoint;
-      
-      this.emit('change', {
-        current: newBreakpoint,
-        previous: previousBreakpoint,
-        width: window.innerWidth
-      });
-    }
-  }
-
-  /**
-   * Get the current breakpoint
-   * @returns {string} Current breakpoint name
-   */
-  getCurrentBreakpoint() {
-    return this.currentBreakpoint;
-  }
-
-  /**
-   * Check if current viewport is at or above a breakpoint
-   * @param {string} breakpoint - Breakpoint name to check
-   * @returns {boolean}
-   */
-  isAtLeast(breakpoint) {
-    if (!this.breakpoints[breakpoint]) {
-      console.warn(`FolioCraft: Unknown breakpoint "${breakpoint}"`);
-      return false;
+    _setBreakpoint(breakpoint) {
+        if (this.isDestroyed) return;
+        
+        const previousBreakpoint = this.currentBreakpoint;
+        
+        if (previousBreakpoint !== breakpoint) {
+            this.currentBreakpoint = breakpoint;
+            this.currentWidth = window.innerWidth;
+            
+            this.emit('change', {
+                current: breakpoint,
+                previous: previousBreakpoint,
+                width: this.currentWidth
+            });
+            
+            this.emit(`breakpoint:${breakpoint}`, {
+                previous: previousBreakpoint,
+                width: this.currentWidth
+            });
+        }
     }
     
-    return window.innerWidth >= this.breakpoints[breakpoint];
-  }
-
-  /**
-   * Check if current viewport is below a breakpoint
-   * @param {string} breakpoint - Breakpoint name to check
-   * @returns {boolean}
-   */
-  isBelow(breakpoint) {
-    return !this.isAtLeast(breakpoint);
-  }
-
-  /**
-   * Check if current viewport matches a specific breakpoint
-   * @param {string} breakpoint - Breakpoint name to check
-   * @returns {boolean}
-   */
-  matches(breakpoint) {
-    return this.currentBreakpoint === breakpoint;
-  }
-
-  /**
-   * Add a custom breakpoint
-   * @param {string} name - Breakpoint name
-   * @param {number} value - Minimum width in pixels
-   */
-  addBreakpoint(name, value) {
-    if (this.initialized) {
-      console.warn('FolioCraft: Cannot add breakpoints after initialization. Call destroy() first.');
-      return this;
+    _handleResize() {
+        if (this.isDestroyed) return;
+        this._updateCurrentBreakpoint();
     }
     
-    this.breakpoints[name] = value;
-    return this;
-  }
-
-  /**
-   * Get all breakpoint values
-   * @returns {Object} Breakpoint configuration
-   */
-  getBreakpoints() {
-    return { ...this.breakpoints };
-  }
-
-  /**
-   * Clean up event listeners
-   */
-  destroy() {
-    this.mediaQueries.forEach(({ mql, handler }) => {
-      if (mql.removeEventListener) {
-        mql.removeEventListener('change', handler);
-      } else {
-        mql.removeListener(handler);
-      }
-    });
+    /**
+     * Get current breakpoint name
+     */
+    getCurrent() {
+        return this.currentBreakpoint;
+    }
     
-    this.mediaQueries.clear();
-    this.removeAllListeners();
-    this.initialized = false;
-    this.currentBreakpoint = null;
-  }
+    /**
+     * Get current viewport width
+     */
+    getWidth() {
+        return window.innerWidth;
+    }
+    
+    /**
+     * Check if current breakpoint matches
+     */
+    is(breakpoint) {
+        return this.currentBreakpoint === breakpoint;
+    }
+    
+    /**
+     * Check if viewport is at least the given breakpoint
+     */
+    isAtLeast(breakpoint) {
+        const currentValue = this.breakpoints[this.currentBreakpoint];
+        const compareValue = this.breakpoints[breakpoint];
+        
+        return currentValue >= compareValue;
+    }
+    
+    /**
+     * Check if viewport is at most the given breakpoint
+     */
+    isAtMost(breakpoint) {
+        const currentValue = this.breakpoints[this.currentBreakpoint];
+        const compareValue = this.breakpoints[breakpoint];
+        
+        return currentValue <= compareValue;
+    }
+    
+    /**
+     * Check if viewport is between two breakpoints (inclusive)
+     */
+    isBetween(minBreakpoint, maxBreakpoint) {
+        return this.isAtLeast(minBreakpoint) && this.isAtMost(maxBreakpoint);
+    }
+    
+    /**
+     * Add a custom breakpoint
+     */
+    addBreakpoint(name, width) {
+        if (this.isDestroyed) {
+            console.warn('BreakpointManager: Cannot add breakpoint, manager is destroyed');
+            return this;
+        }
+        
+        this.breakpoints[name] = width;
+        this._cleanupMediaQueries();
+        this._setupMediaQueries();
+        this._updateCurrentBreakpoint();
+        
+        return this;
+    }
+    
+    /**
+     * Remove a breakpoint
+     */
+    removeBreakpoint(name) {
+        if (this.isDestroyed) return this;
+        
+        if (this.breakpoints[name] !== undefined) {
+            delete this.breakpoints[name];
+            this._cleanupMediaQueries();
+            this._setupMediaQueries();
+            this._updateCurrentBreakpoint();
+        }
+        
+        return this;
+    }
+    
+    /**
+     * Get all breakpoints
+     */
+    getBreakpoints() {
+        return { ...this.breakpoints };
+    }
+    
+    /**
+     * Clean up media query listeners
+     */
+    _cleanupMediaQueries() {
+        this.mediaQueries.forEach(({ mql, handler }) => {
+            if (mql.removeEventListener) {
+                mql.removeEventListener('change', handler);
+            } else {
+                mql.removeListener(handler);
+            }
+        });
+        this.mediaQueries.clear();
+    }
+    
+    /**
+     * Destroy the manager
+     */
+    destroy() {
+        if (this.isDestroyed) return;
+        
+        this.isDestroyed = true;
+        this._cleanupMediaQueries();
+        this.removeAllListeners();
+    }
 }
 
 export default BreakpointManager;
