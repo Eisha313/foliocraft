@@ -1,172 +1,194 @@
-import { Component } from '../core/Component.js';
-import { ScrollAnimator } from '../core/ScrollAnimator.js';
+import Component from '../core/Component.js';
+import { createElement, generateId, applyCustomProperties } from '../core/ComponentUtils.js';
 
 /**
- * ProjectCard - A component for displaying portfolio project items
- * Supports images, descriptions, tags, and links with hover effects
+ * ProjectCard - Individual project display component
+ * Displays project information with image, title, description, and links
  */
-export class ProjectCard extends Component {
-    static defaults = {
-        animateOnScroll: true,
-        animationClass: 'fc-reveal',
-        hoverEffect: 'lift',
-        imageAspectRatio: '16/9',
-        showTags: true,
-        maxTags: 5,
-        linkTarget: '_blank'
+export default class ProjectCard extends Component {
+  constructor(options = {}) {
+    super(options);
+    
+    this.config = {
+      title: options.title || 'Project Title',
+      description: options.description || '',
+      image: options.image || null,
+      tags: options.tags || [],
+      links: options.links || [],
+      featured: options.featured || false,
+      animateOnScroll: options.animateOnScroll !== false,
+      hoverEffect: options.hoverEffect || 'lift',
+      aspectRatio: options.aspectRatio || '16/9',
+      ...options
     };
-
-    constructor(container, options = {}) {
-        super(container, { ...ProjectCard.defaults, ...options });
-        
-        this.data = null;
-        this.animator = null;
-        
-        this.init();
+    
+    this.id = generateId('project');
+    this.isRevealed = false;
+  }
+  
+  render() {
+    const card = createElement('article', {
+      className: this.getCardClasses(),
+      id: this.id,
+      dataFeatured: this.config.featured.toString()
+    });
+    
+    applyCustomProperties(card, {
+      'aspect-ratio': this.config.aspectRatio
+    });
+    
+    if (this.config.image) {
+      card.appendChild(this.renderImage());
     }
-
-    init() {
-        this.element.classList.add('fc-project-card');
-        this.element.setAttribute('role', 'article');
-        
-        if (this.options.hoverEffect) {
-            this.element.classList.add(`fc-hover-${this.options.hoverEffect}`);
-        }
-
-        if (this.options.animateOnScroll) {
-            this.animator = new ScrollAnimator({
-                animationClass: this.options.animationClass
-            });
-        }
-
-        this.bindEvents();
+    
+    card.appendChild(this.renderContent());
+    
+    this.element = card;
+    this.attachEventListeners();
+    
+    return card;
+  }
+  
+  getCardClasses() {
+    const classes = ['fc-project-card'];
+    
+    if (this.config.featured) {
+      classes.push('fc-project-card--featured');
     }
-
-    bindEvents() {
-        this.element.addEventListener('mouseenter', () => this.onMouseEnter());
-        this.element.addEventListener('mouseleave', () => this.onMouseLeave());
-        this.element.addEventListener('click', (e) => this.onClick(e));
+    
+    if (this.config.hoverEffect) {
+      classes.push(`fc-project-card--hover-${this.config.hoverEffect}`);
     }
-
-    onMouseEnter() {
-        this.emit('hover', { card: this, data: this.data });
+    
+    if (this.config.animateOnScroll) {
+      classes.push('fc-project-card--animate');
     }
-
-    onMouseLeave() {
-        this.emit('hoverEnd', { card: this, data: this.data });
+    
+    return classes.join(' ');
+  }
+  
+  renderImage() {
+    const imageWrapper = createElement('div', {
+      className: 'fc-project-card__image-wrapper'
+    });
+    
+    const image = createElement('img', {
+      className: 'fc-project-card__image',
+      src: this.config.image,
+      alt: this.config.title,
+      loading: 'lazy'
+    });
+    
+    imageWrapper.appendChild(image);
+    
+    if (this.config.tags.length > 0) {
+      imageWrapper.appendChild(this.renderTags());
     }
-
-    onClick(event) {
-        // Don't trigger if clicking on a link
-        if (event.target.tagName === 'A') return;
-        
-        this.emit('click', { card: this, data: this.data, event });
+    
+    return imageWrapper;
+  }
+  
+  renderTags() {
+    const tagsContainer = createElement('div', {
+      className: 'fc-project-card__tags'
+    });
+    
+    this.config.tags.forEach(tag => {
+      const tagElement = createElement('span', {
+        className: 'fc-project-card__tag'
+      }, tag);
+      tagsContainer.appendChild(tagElement);
+    });
+    
+    return tagsContainer;
+  }
+  
+  renderContent() {
+    const content = createElement('div', {
+      className: 'fc-project-card__content'
+    });
+    
+    const title = createElement('h3', {
+      className: 'fc-project-card__title'
+    }, this.config.title);
+    
+    content.appendChild(title);
+    
+    if (this.config.description) {
+      const description = createElement('p', {
+        className: 'fc-project-card__description'
+      }, this.config.description);
+      content.appendChild(description);
     }
-
-    /**
-     * Set project data and render the card
-     * @param {Object} data - Project data object
-     * @param {string} data.title - Project title
-     * @param {string} [data.description] - Project description
-     * @param {string} [data.image] - Image URL
-     * @param {string} [data.imageAlt] - Image alt text
-     * @param {string[]} [data.tags] - Array of tag strings
-     * @param {Object[]} [data.links] - Array of link objects {url, label, icon}
-     */
-    setData(data) {
-        this.data = data;
-        this.render();
-        
-        if (this.animator) {
-            this.animator.observe(this.element);
-        }
-        
-        return this;
+    
+    if (this.config.links.length > 0) {
+      content.appendChild(this.renderLinks());
     }
-
-    render() {
-        if (!this.data) return;
-
-        const { title, description, image, imageAlt, tags, links } = this.data;
-
-        let html = '';
-
-        // Image section
-        if (image) {
-            html += `
-                <div class="fc-project-card__image" style="aspect-ratio: ${this.options.imageAspectRatio}">
-                    <img src="${this.escapeHtml(image)}" alt="${this.escapeHtml(imageAlt || title)}" loading="lazy" />
-                    <div class="fc-project-card__overlay"></div>
-                </div>
-            `;
-        }
-
-        // Content section
-        html += '<div class="fc-project-card__content">';
-
-        // Title
-        html += `<h3 class="fc-project-card__title">${this.escapeHtml(title)}</h3>`;
-
-        // Description
-        if (description) {
-            html += `<p class="fc-project-card__description">${this.escapeHtml(description)}</p>`;
-        }
-
-        // Tags
-        if (this.options.showTags && tags && tags.length > 0) {
-            const displayTags = tags.slice(0, this.options.maxTags);
-            const remaining = tags.length - displayTags.length;
-            
-            html += '<div class="fc-project-card__tags">';
-            displayTags.forEach(tag => {
-                html += `<span class="fc-project-card__tag">${this.escapeHtml(tag)}</span>`;
-            });
-            if (remaining > 0) {
-                html += `<span class="fc-project-card__tag fc-project-card__tag--more">+${remaining}</span>`;
-            }
-            html += '</div>';
-        }
-
-        // Links
-        if (links && links.length > 0) {
-            html += '<div class="fc-project-card__links">';
-            links.forEach(link => {
-                const iconHtml = link.icon ? `<span class="fc-project-card__link-icon">${link.icon}</span>` : '';
-                html += `
-                    <a href="${this.escapeHtml(link.url)}" 
-                       class="fc-project-card__link" 
-                       target="${this.options.linkTarget}"
-                       rel="noopener noreferrer">
-                        ${iconHtml}
-                        <span>${this.escapeHtml(link.label)}</span>
-                    </a>
-                `;
-            });
-            html += '</div>';
-        }
-
-        html += '</div>';
-
-        this.element.innerHTML = html;
-        this.emit('render', { card: this, data: this.data });
+    
+    return content;
+  }
+  
+  renderLinks() {
+    const linksContainer = createElement('div', {
+      className: 'fc-project-card__links'
+    });
+    
+    this.config.links.forEach(link => {
+      const anchor = createElement('a', {
+        className: 'fc-project-card__link',
+        href: link.url,
+        target: link.external ? '_blank' : '_self',
+        rel: link.external ? 'noopener noreferrer' : ''
+      }, link.label);
+      linksContainer.appendChild(anchor);
+    });
+    
+    return linksContainer;
+  }
+  
+  attachEventListeners() {
+    if (!this.element) return;
+    
+    this.element.addEventListener('mouseenter', () => {
+      this.emit('hover', { card: this, hovering: true });
+    });
+    
+    this.element.addEventListener('mouseleave', () => {
+      this.emit('hover', { card: this, hovering: false });
+    });
+    
+    this.element.addEventListener('click', (e) => {
+      if (!e.target.closest('a')) {
+        this.emit('click', { card: this, event: e });
+      }
+    });
+  }
+  
+  reveal() {
+    if (this.isRevealed || !this.element) return;
+    
+    this.element.classList.add('fc-project-card--revealed');
+    this.isRevealed = true;
+    this.emit('reveal', { card: this });
+  }
+  
+  update(newConfig) {
+    Object.assign(this.config, newConfig);
+    
+    if (this.element && this.element.parentNode) {
+      const parent = this.element.parentNode;
+      const newElement = this.render();
+      parent.replaceChild(newElement, this.element);
     }
-
-    escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+    
+    this.emit('update', { card: this });
+  }
+  
+  destroy() {
+    if (this.element) {
+      this.element.remove();
+      this.element = null;
     }
-
-    destroy() {
-        if (this.animator) {
-            this.animator.unobserve(this.element);
-            this.animator.destroy();
-        }
-        this.element.classList.remove('fc-project-card');
-        this.element.innerHTML = '';
-        super.destroy();
-    }
+    this.removeAllListeners();
+  }
 }
-
-export default ProjectCard;
