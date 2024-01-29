@@ -1,144 +1,125 @@
 /**
- * EventEmitter - Simple event emitter for component communication
- * Provides pub/sub functionality with proper memory management
+ * A lightweight event emitter implementation for component communication.
+ * Provides pub/sub pattern without external dependencies.
+ * 
+ * @class EventEmitter
+ * @example
+ * const emitter = new EventEmitter();
+ * 
+ * emitter.on('update', (data) => {
+ *   console.log('Updated:', data);
+ * });
+ * 
+ * emitter.emit('update', { value: 42 });
  */
-class EventEmitter {
+export class EventEmitter {
+  /**
+   * Create a new EventEmitter instance
+   */
   constructor() {
-    this.events = new Map();
+    /** @type {Map<string, Set<Function>>} Event listeners map */
+    this.listeners = new Map();
   }
   
   /**
-   * Subscribe to an event
-   * @param {string} event - Event name
-   * @param {Function} callback - Event handler
-   * @returns {Function} Unsubscribe function
+   * Register an event listener
+   * @param {string} event - Event name to listen for
+   * @param {Function} callback - Function to call when event is emitted
+   * @returns {EventEmitter} This instance for chaining
+   * @example
+   * emitter.on('click', (data) => console.log(data));
    */
   on(event, callback) {
-    if (typeof callback !== 'function') {
-      throw new TypeError('EventEmitter: callback must be a function');
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
     }
-    
-    if (!this.events.has(event)) {
-      this.events.set(event, new Set());
-    }
-    
-    this.events.get(event).add(callback);
-    
-    // Return unsubscribe function for convenience
-    return () => this.off(event, callback);
+    this.listeners.get(event).add(callback);
+    return this;
   }
   
   /**
-   * Subscribe to an event only once
-   * @param {string} event - Event name
-   * @param {Function} callback - Event handler
-   * @returns {Function} Unsubscribe function
+   * Register a one-time event listener
+   * @param {string} event - Event name to listen for
+   * @param {Function} callback - Function to call when event is emitted
+   * @returns {EventEmitter} This instance for chaining
+   * @example
+   * emitter.once('init', () => console.log('Initialized!'));
    */
   once(event, callback) {
-    const wrapper = (...args) => {
-      this.off(event, wrapper);
+    const onceWrapper = (...args) => {
       callback.apply(this, args);
+      this.off(event, onceWrapper);
     };
-    
-    // Store reference to original callback for removal
-    wrapper._originalCallback = callback;
-    
-    return this.on(event, wrapper);
+    return this.on(event, onceWrapper);
   }
   
   /**
-   * Unsubscribe from an event
+   * Remove an event listener
    * @param {string} event - Event name
-   * @param {Function} callback - Event handler to remove
+   * @param {Function} callback - Function to remove
+   * @returns {EventEmitter} This instance for chaining
+   * @example
+   * emitter.off('click', myHandler);
    */
   off(event, callback) {
-    const listeners = this.events.get(event);
-    
-    if (!listeners) {
-      return this;
+    if (this.listeners.has(event)) {
+      this.listeners.get(event).delete(callback);
     }
-    
-    // Handle removal of 'once' wrapped callbacks
-    listeners.forEach(listener => {
-      if (listener === callback || listener._originalCallback === callback) {
-        listeners.delete(listener);
-      }
-    });
-    
-    // Clean up empty event sets to prevent memory buildup
-    if (listeners.size === 0) {
-      this.events.delete(event);
-    }
-    
     return this;
   }
   
   /**
-   * Emit an event
-   * @param {string} event - Event name
-   * @param {*} data - Event data
+   * Emit an event to all registered listeners
+   * @param {string} event - Event name to emit
+   * @param {...*} args - Arguments to pass to listeners
+   * @returns {EventEmitter} This instance for chaining
+   * @example
+   * emitter.emit('update', { id: 1, value: 'new' });
    */
-  emit(event, data) {
-    const listeners = this.events.get(event);
-    
-    if (!listeners || listeners.size === 0) {
-      return this;
+  emit(event, ...args) {
+    if (this.listeners.has(event)) {
+      this.listeners.get(event).forEach(callback => {
+        try {
+          callback.apply(this, args);
+        } catch (error) {
+          console.error(`Error in event listener for "${event}":`, error);
+        }
+      });
     }
-    
-    // Create a copy of listeners to avoid issues if listeners modify the set
-    const listenersCopy = Array.from(listeners);
-    
-    listenersCopy.forEach(callback => {
-      try {
-        callback.call(this, data);
-      } catch (error) {
-        console.error(`EventEmitter: Error in '${event}' handler:`, error);
-      }
-    });
-    
     return this;
   }
   
   /**
-   * Remove all listeners for an event or all events
-   * @param {string} [event] - Optional event name
+   * Remove all listeners for a specific event or all events
+   * @param {string} [event] - Event name (if omitted, removes all listeners)
+   * @returns {EventEmitter} This instance for chaining
+   * @example
+   * emitter.removeAllListeners('click'); // Remove click listeners
+   * emitter.removeAllListeners(); // Remove all listeners
    */
   removeAllListeners(event) {
     if (event) {
-      this.events.delete(event);
+      this.listeners.delete(event);
     } else {
-      this.events.clear();
+      this.listeners.clear();
     }
-    
     return this;
   }
   
   /**
-   * Get listener count for an event
+   * Get the count of listeners for an event
    * @param {string} event - Event name
-   * @returns {number}
+   * @returns {number} Number of listeners
    */
   listenerCount(event) {
-    const listeners = this.events.get(event);
-    return listeners ? listeners.size : 0;
+    return this.listeners.has(event) ? this.listeners.get(event).size : 0;
   }
   
   /**
-   * Check if event has listeners
-   * @param {string} event - Event name
-   * @returns {boolean}
-   */
-  hasListeners(event) {
-    return this.listenerCount(event) > 0;
-  }
-  
-  /**
-   * Get all event names with listeners
-   * @returns {string[]}
+   * Get all event names that have listeners
+   * @returns {string[]} Array of event names
    */
   eventNames() {
-    return Array.from(this.events.keys());
+    return Array.from(this.listeners.keys());
   }
 }
-
-export default EventEmitter;
