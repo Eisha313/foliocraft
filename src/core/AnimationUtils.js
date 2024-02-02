@@ -74,46 +74,9 @@ export function animate({ from, to, duration, easing = 'easeOutCubic', onUpdate,
   };
 }
 
-/**
- * Debounce function execution
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in ms
- * @returns {Function} Debounced function
- */
-export function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-/**
- * Throttle function execution
- * @param {Function} func - Function to throttle
- * @param {number} limit - Minimum time between calls
- * @returns {Function} Throttled function
- */
-export function throttle(func, limit) {
-  let inThrottle;
-  return function executedFunction(...args) {
-    if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-}
-
 export default {
   easings,
   raf,
   cancelRaf,
-  animate,
-  debounce,
-  throttle
+  animate
 };

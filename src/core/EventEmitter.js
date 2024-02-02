@@ -123,3 +123,5 @@ export class EventEmitter {
     return Array.from(this.listeners.keys());
   }
 }
+
+export default EventEmitter;

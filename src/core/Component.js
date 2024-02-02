@@ -1,5 +1,5 @@
 import { EventEmitter } from './EventEmitter.js';
-import { ComponentUtils } from './ComponentUtils.js';
+import ComponentUtils from './ComponentUtils.js';
 
 /**
  * Base Component class that all FolioCraft components extend.
@@ -90,7 +90,20 @@ export class Component extends EventEmitter {
    * @returns {HTMLElement} The created element
    * @protected
    */
-  createElement() {
+  createElement(tag, options) {
+    // Overloaded: createElement('div', { className, html, attributes })
+    if (typeof tag === 'string' && options) {
+      const el = document.createElement(tag);
+      if (options.className) el.className = options.className;
+      if (options.html) el.innerHTML = options.html;
+      if (options.attributes) {
+        Object.entries(options.attributes).forEach(([k, v]) => el.setAttribute(k, v));
+      }
+      el.setAttribute('data-foliocraft-id', this.id);
+      return el;
+    }
+
+    // Original: createElement() — build from render() HTML string
     const html = this.render();
     const temp = document.createElement('div');
     temp.innerHTML = html.trim();
@@ -204,3 +217,5 @@ export class Component extends EventEmitter {
     this.emit('destroyed');
   }
 }
+
+export default Component;
