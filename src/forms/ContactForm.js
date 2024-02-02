@@ -100,7 +100,7 @@ export class ContactForm extends Component {
    * Create DOM element
    * @returns {HTMLElement} Form element
    */
-  createElement() {
+  _createFormElement() {
     const form = document.createElement('form');
     form.className = this.buildClassName();
     form.setAttribute('novalidate', '');
@@ -224,6 +224,15 @@ export class ContactForm extends Component {
     }
     
     return wrapper;
+  }
+
+  /**
+   * Render the form component
+   * @returns {HTMLElement} The form element
+   */
+  render() {
+    this.element = this._createFormElement();
+    return this.element;
   }
 
   /**

@@ -1,11 +1,25 @@
 import Component from '../core/Component.js';
-import { fadeIn, slideIn } from '../core/AnimationUtils.js';
+// fadeIn/slideIn helpers using Web Animations API
+function fadeIn(element, { duration = 300, delay = 0 } = {}) {
+  return element.animate(
+    [{ opacity: 0 }, { opacity: 1 }],
+    { duration, delay, fill: 'forwards' }
+  ).finished;
+}
+
+function slideIn(element, { direction = 'left', duration = 500, delay = 0 } = {}) {
+  const x = direction === 'left' ? '-30px' : '30px';
+  return element.animate(
+    [{ opacity: 0, transform: `translateX(${x})` }, { opacity: 1, transform: 'translateX(0)' }],
+    { duration, delay, fill: 'forwards' }
+  ).finished;
+}
 
 /**
  * TimelineEntry - Individual entry in a timeline
  * Supports different layouts and content types
  */
-class TimelineEntry extends Component {
+export class TimelineEntry extends Component {
     constructor(options = {}) {
         super(options);
         
@@ -87,7 +101,7 @@ class TimelineEntry extends Component {
             'fc-timeline-entry',
             this.getPositionClass(),
             this.highlighted ? 'fc-timeline-entry--highlighted' : '',
-            this.className
+            this.options.className || ''
         ].filter(Boolean).join(' ');
         
         const dotStyle = this.dotColor ? `style="background-color: ${this.dotColor}"` : '';

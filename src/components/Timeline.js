@@ -6,7 +6,7 @@ import TimelineEntry from './TimelineEntry.js';
  * Timeline - Container for chronological entries
  * Supports vertical layout with alternating sides
  */
-class Timeline extends Component {
+export class Timeline extends Component {
     constructor(options = {}) {
         super(options);
         
@@ -90,6 +90,7 @@ class Timeline extends Component {
                 entry.element.style.opacity = '0';
                 
                 this.scrollAnimator.observe(entry.element, () => {
+                    entry.element.style.opacity = '1';
                     entry.animateIn(index * this.animationDelay);
                 });
             }
@@ -109,7 +110,7 @@ class Timeline extends Component {
             'fc-timeline',
             `fc-timeline--${this.layout}`,
             this.compact ? 'fc-timeline--compact' : '',
-            this.className
+            this.options.className || ''
         ].filter(Boolean).join(' ');
         
         this.element = this.createElement('div', {

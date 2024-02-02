@@ -1,6 +1,6 @@
 import { Component } from '../core/Component.js';
 import { ProjectCard } from './ProjectCard.js';
-import { BreakpointManager } from '../responsive/BreakpointManager.js';
+import BreakpointManager from '../responsive/BreakpointManager.js';
 
 /**
  * ProjectGrid - A responsive grid container for ProjectCard components
@@ -20,23 +20,24 @@ export class ProjectGrid extends Component {
         filterAnimationDuration: 300
     };
 
-    constructor(container, options = {}) {
-        super(container, { ...ProjectGrid.defaults, ...options });
-        
+    constructor(options = {}) {
+        super({ ...ProjectGrid.defaults, ...options });
+
         this.cards = [];
         this.projects = [];
         this.activeFilter = null;
         this.breakpointManager = null;
-        
-        this.init();
     }
 
-    init() {
+    render() {
+        this.element = document.createElement('div');
         this.element.classList.add('fc-project-grid');
         this.element.setAttribute('role', 'list');
-        
+
         this.applyStyles();
         this.setupBreakpointListener();
+
+        return this.element;
     }
 
     applyStyles() {
@@ -84,20 +85,20 @@ export class ProjectGrid extends Component {
         wrapper.classList.add('fc-project-grid__item');
         wrapper.setAttribute('role', 'listitem');
         wrapper.dataset.index = index !== undefined ? index : this.cards.length;
-        
+
         if (project.tags) {
             wrapper.dataset.tags = project.tags.join(',').toLowerCase();
         }
-        
+
+        const card = new ProjectCard({ ...this.options.cardOptions, ...project });
+        const cardEl = card.render();
+        wrapper.appendChild(cardEl);
         this.element.appendChild(wrapper);
-        
-        const card = new ProjectCard(wrapper, this.options.cardOptions);
-        card.setData(project);
-        
+
         // Bubble up card events
         card.on('click', (data) => this.emit('cardClick', data));
         card.on('hover', (data) => this.emit('cardHover', data));
-        
+
         this.cards.push(card);
         return card;
     }

@@ -7,7 +7,8 @@ import { Component } from '../core/Component.js';
 
 export class ThemeToggle extends Component {
   constructor(themeManager, options = {}) {
-    super(options.container || document.body, {
+    super({
+      container: options.container || document.body,
       className: 'fc-theme-toggle',
       ariaLabel: 'Toggle theme',
       showLabel: false,
@@ -17,10 +18,11 @@ export class ThemeToggle extends Component {
       darkLabel: 'Dark mode',
       ...options
     });
-    
+
+    this.container = this.options.container || document.body;
     this.themeManager = themeManager;
     this.button = null;
-    
+
     this._init();
   }
   

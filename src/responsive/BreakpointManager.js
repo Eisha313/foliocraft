@@ -4,7 +4,7 @@ import EventEmitter from '../core/EventEmitter.js';
  * BreakpointManager - Handle responsive breakpoints
  * Provides customizable thresholds and change detection
  */
-class BreakpointManager extends EventEmitter {
+export class BreakpointManager extends EventEmitter {
     constructor(options = {}) {
         super();
         
@@ -118,6 +118,13 @@ class BreakpointManager extends EventEmitter {
      */
     getCurrent() {
         return this.currentBreakpoint;
+    }
+
+    /**
+     * Alias for getCurrent() - used by ProjectGrid and ResponsiveContainer
+     */
+    getCurrentBreakpoint() {
+        return this.getCurrent();
     }
     
     /**
