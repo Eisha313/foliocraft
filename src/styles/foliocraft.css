@@ -1,0 +1,1335 @@
+/* ==========================================================================
+   FolioCraft Component Library — Master Stylesheet
+   A modern, polished design system for portfolio websites.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DESIGN TOKENS (CSS Custom Properties)
+   ========================================================================== */
+
+:root {
+  /* --- Color Palette (Light Theme) --- */
+  --fc-primary: #3498db;
+  --fc-primary-dark: #2980b9;
+  --fc-primary-hover: #2563eb;
+  --fc-secondary: #2ecc71;
+  --fc-secondary-dark: #27ae60;
+  --fc-accent: #e74c3c;
+  --fc-background: #ffffff;
+  --fc-surface: #f8f9fa;
+  --fc-text: #2c3e50;
+  --fc-text-muted: #7f8c8d;
+  --fc-border: #ecf0f1;
+  --fc-shadow: rgba(0, 0, 0, 0.1);
+  --fc-overlay: rgba(0, 0, 0, 0.5);
+
+  /* --- Component-level tokens mapped to core palette --- */
+  --fc-text-primary: #1f2937;
+  --fc-text-secondary: #6b7280;
+  --fc-card-bg: #ffffff;
+  --fc-card-radius: 12px;
+  --fc-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --fc-card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+  --fc-card-padding: 1.5rem;
+  --fc-card-title-size: 1.25rem;
+  --fc-card-text-size: 0.875rem;
+  --fc-tag-bg: #f3f4f6;
+  --fc-tag-color: #4b5563;
+  --fc-focus-color: #3b82f6;
+  --fc-secondary-bg: #e5e7eb;
+  --fc-secondary-bg-hover: #d1d5db;
+
+  /* --- Skill Bar Tokens --- */
+  --fc-skill-bar-height: 10px;
+  --fc-skill-bar-radius: 9999px;
+  --fc-skill-bar-track: #e5e7eb;
+  --fc-skill-bar-fill: var(--fc-primary);
+  --fc-skill-bar-duration: 1000ms;
+  --fc-skill-bar-easing: ease-out;
+  --fc-skill-bar-delay: 0ms;
+
+  /* --- Timeline Tokens --- */
+  --fc-timeline-line-color: #e5e7eb;
+  --fc-timeline-line-width: 3px;
+  --fc-timeline-dot-size: 16px;
+  --fc-timeline-dot-color: var(--fc-primary);
+  --fc-timeline-dot-border: 3px solid var(--fc-background);
+  --fc-timeline-card-bg: var(--fc-card-bg);
+  --fc-timeline-card-shadow: var(--fc-card-shadow);
+
+  /* --- Form Tokens --- */
+  --fc-form-input-bg: #ffffff;
+  --fc-form-input-border: #d1d5db;
+  --fc-form-input-focus-border: var(--fc-primary);
+  --fc-form-input-radius: 8px;
+  --fc-form-input-padding: 0.75rem 1rem;
+  --fc-form-error-color: #ef4444;
+  --fc-form-success-color: #10b981;
+  --fc-form-button-bg: var(--fc-primary);
+  --fc-form-button-hover-bg: var(--fc-primary-dark);
+
+  /* --- Spacing & Layout --- */
+  --fc-spacing-xs: 0.25rem;
+  --fc-spacing-sm: 0.5rem;
+  --fc-spacing-md: 1rem;
+  --fc-spacing-lg: 1.5rem;
+  --fc-spacing-xl: 2rem;
+  --fc-spacing-2xl: 3rem;
+
+  /* --- Typography --- */
+  --fc-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fc-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --fc-line-height: 1.6;
+
+  /* --- Transitions --- */
+  --fc-transition-fast: 150ms ease;
+  --fc-transition-base: 200ms ease;
+  --fc-transition-slow: 300ms ease;
+}
+
+/* ==========================================================================
+   2. DARK THEME — via .fc-theme-dark body class
+   ========================================================================== */
+
+body.fc-theme-dark {
+  --fc-primary: #3498db;
+  --fc-primary-dark: #2980b9;
+  --fc-primary-hover: #60a5fa;
+  --fc-secondary: #2ecc71;
+  --fc-secondary-dark: #27ae60;
+  --fc-accent: #e74c3c;
+  --fc-background: #1a1a2e;
+  --fc-surface: #16213e;
+  --fc-text: #eaeaea;
+  --fc-text-muted: #a0a0a0;
+  --fc-border: #2d2d44;
+  --fc-shadow: rgba(0, 0, 0, 0.3);
+  --fc-overlay: rgba(0, 0, 0, 0.7);
+
+  --fc-text-primary: #f3f4f6;
+  --fc-text-secondary: #9ca3af;
+  --fc-card-bg: #16213e;
+  --fc-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --fc-card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+  --fc-tag-bg: #2d2d44;
+  --fc-tag-color: #c4b5fd;
+  --fc-focus-color: #60a5fa;
+  --fc-secondary-bg: #2d2d44;
+  --fc-secondary-bg-hover: #3d3d5c;
+
+  --fc-skill-bar-track: #2d2d44;
+
+  --fc-timeline-line-color: #2d2d44;
+  --fc-timeline-card-bg: var(--fc-card-bg);
+  --fc-timeline-card-shadow: var(--fc-card-shadow);
+
+  --fc-form-input-bg: #1e1e38;
+  --fc-form-input-border: #3d3d5c;
+}
+
+/* ==========================================================================
+   2b. DARK THEME — via prefers-color-scheme (fallback for users without JS)
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not(body.fc-theme-light *) {
+    --fc-background: #1a1a2e;
+    --fc-surface: #16213e;
+    --fc-text: #eaeaea;
+    --fc-text-muted: #a0a0a0;
+    --fc-border: #2d2d44;
+    --fc-shadow: rgba(0, 0, 0, 0.3);
+    --fc-overlay: rgba(0, 0, 0, 0.7);
+    --fc-text-primary: #f3f4f6;
+    --fc-text-secondary: #9ca3af;
+    --fc-card-bg: #16213e;
+    --fc-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    --fc-card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+    --fc-tag-bg: #2d2d44;
+    --fc-tag-color: #c4b5fd;
+    --fc-focus-color: #60a5fa;
+    --fc-secondary-bg: #2d2d44;
+    --fc-secondary-bg-hover: #3d3d5c;
+    --fc-skill-bar-track: #2d2d44;
+    --fc-timeline-line-color: #2d2d44;
+    --fc-form-input-bg: #1e1e38;
+    --fc-form-input-border: #3d3d5c;
+  }
+
+  /* Explicit light override cancels the media query */
+  body.fc-theme-light {
+    --fc-background: #ffffff;
+    --fc-surface: #f8f9fa;
+    --fc-text: #2c3e50;
+    --fc-text-muted: #7f8c8d;
+    --fc-border: #ecf0f1;
+    --fc-shadow: rgba(0, 0, 0, 0.1);
+    --fc-overlay: rgba(0, 0, 0, 0.5);
+    --fc-text-primary: #1f2937;
+    --fc-text-secondary: #6b7280;
+    --fc-card-bg: #ffffff;
+    --fc-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --fc-card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+    --fc-tag-bg: #f3f4f6;
+    --fc-tag-color: #4b5563;
+    --fc-focus-color: #3b82f6;
+    --fc-secondary-bg: #e5e7eb;
+    --fc-secondary-bg-hover: #d1d5db;
+    --fc-skill-bar-track: #e5e7eb;
+    --fc-timeline-line-color: #e5e7eb;
+    --fc-form-input-bg: #ffffff;
+    --fc-form-input-border: #d1d5db;
+  }
+}
+
+/* ==========================================================================
+   3. BASE / RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   4. PROJECT CARD — .fc-project-card
+   ========================================================================== */
+
+.fc-project-card {
+  position: relative;
+  background: var(--fc-card-bg, #ffffff);
+  border-radius: var(--fc-card-radius, 12px);
+  box-shadow: var(--fc-card-shadow);
+  overflow: hidden;
+  transition:
+    transform var(--fc-transition-base),
+    box-shadow var(--fc-transition-base);
+  will-change: transform, opacity;
+}
+
+.fc-project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--fc-card-shadow-hover);
+}
+
+.fc-project-card--focused {
+  outline: 2px solid var(--fc-focus-color, #3b82f6);
+  outline-offset: 2px;
+}
+
+.fc-project-card--featured {
+  grid-column: span 2;
+}
+
+/* Image */
+.fc-project-card__image-container {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--fc-surface);
+}
+
+.fc-project-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--fc-transition-slow);
+}
+
+.fc-project-card:hover .fc-project-card__image {
+  transform: scale(1.05);
+}
+
+.fc-project-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--fc-transition-slow);
+  pointer-events: none;
+}
+
+.fc-project-card:hover .fc-project-card__overlay {
+  opacity: 1;
+}
+
+/* Content */
+.fc-project-card__content {
+  padding: var(--fc-card-padding, 1.5rem);
+}
+
+.fc-project-card__title {
+  margin: 0 0 0.5rem;
+  font-size: var(--fc-card-title-size, 1.25rem);
+  font-weight: 600;
+  color: var(--fc-text-primary, #1f2937);
+  line-height: 1.3;
+}
+
+.fc-project-card__description {
+  margin: 0 0 1rem;
+  color: var(--fc-text-secondary, #6b7280);
+  font-size: var(--fc-card-text-size, 0.875rem);
+  line-height: var(--fc-line-height);
+}
+
+/* Tags */
+.fc-project-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.fc-project-card__tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--fc-tag-bg, #f3f4f6);
+  color: var(--fc-tag-color, #4b5563);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background var(--fc-transition-fast);
+}
+
+.fc-project-card__tag:hover {
+  background: var(--fc-secondary-bg, #e5e7eb);
+}
+
+/* Links */
+.fc-project-card__links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fc-project-card__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background var(--fc-transition-base),
+    color var(--fc-transition-base),
+    transform var(--fc-transition-fast);
+}
+
+.fc-project-card__link:hover {
+  transform: translateY(-1px);
+}
+
+.fc-project-card__link--demo {
+  background: var(--fc-primary, #3b82f6);
+  color: #ffffff;
+}
+
+.fc-project-card__link--demo:hover {
+  background: var(--fc-primary-hover, #2563eb);
+}
+
+.fc-project-card__link--source {
+  background: var(--fc-secondary-bg, #e5e7eb);
+  color: var(--fc-text-primary, #1f2937);
+}
+
+.fc-project-card__link--source:hover {
+  background: var(--fc-secondary-bg-hover, #d1d5db);
+}
+
+.fc-project-card__link--case-study {
+  background: transparent;
+  color: var(--fc-primary, #3498db);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    text-decoration-color var(--fc-transition-base),
+    color var(--fc-transition-base);
+}
+
+.fc-project-card__link--case-study:hover {
+  text-decoration-color: var(--fc-primary, #3498db);
+}
+
+/* ==========================================================================
+   5. PROJECT GRID — .fc-project-grid
+   ========================================================================== */
+
+.fc-project-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+.fc-project-grid__item {
+  transition:
+    opacity var(--fc-transition-slow),
+    transform var(--fc-transition-slow);
+}
+
+/* ==========================================================================
+   6. SKILL BAR — .fc-skill-bar
+   ========================================================================== */
+
+.fc-skill-bar {
+  margin-bottom: 1.25rem;
+}
+
+.fc-skill-bar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.fc-skill-bar__name-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fc-skill-bar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.fc-skill-bar__icon-img {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+
+.fc-skill-bar__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--fc-text-primary, #1f2937);
+}
+
+.fc-skill-bar__percentage {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--fc-text-muted, #7f8c8d);
+  font-variant-numeric: tabular-nums;
+}
+
+.fc-skill-bar__track {
+  position: relative;
+  width: 100%;
+  height: var(--fc-skill-bar-height, 10px);
+  background: var(--fc-skill-bar-track, #e5e7eb);
+  border-radius: var(--fc-skill-bar-radius, 9999px);
+  overflow: hidden;
+}
+
+.fc-skill-bar__fill {
+  height: 100%;
+  width: 0;
+  background: var(--fc-skill-bar-fill, var(--fc-primary));
+  border-radius: var(--fc-skill-bar-radius, 9999px);
+  transition:
+    width var(--fc-skill-bar-duration, 1000ms) var(--fc-skill-bar-easing, ease-out);
+  transition-delay: var(--fc-skill-bar-delay, 0ms);
+}
+
+.fc-skill-bar__level-label {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fc-text-muted, #7f8c8d);
+}
+
+/* Skill level modifiers */
+.fc-skill-bar--expert .fc-skill-bar__fill {
+  background: var(--fc-skill-bar-fill, var(--fc-secondary, #2ecc71));
+}
+
+.fc-skill-bar--intermediate .fc-skill-bar__fill {
+  background: var(--fc-skill-bar-fill, var(--fc-primary, #3498db));
+}
+
+.fc-skill-bar--beginner .fc-skill-bar__fill {
+  background: var(--fc-skill-bar-fill, #f59e0b);
+}
+
+/* Animation states */
+.fc-skill-bar--animating .fc-skill-bar__fill {
+  will-change: width;
+}
+
+.fc-skill-bar--animated .fc-skill-bar__fill {
+  will-change: auto;
+}
+
+/* ==========================================================================
+   7. SKILL GROUP — .fc-skill-group
+   ========================================================================== */
+
+.fc-skill-group {
+  margin-bottom: var(--fc-spacing-xl);
+}
+
+.fc-skill-group__title {
+  margin: 0 0 var(--fc-spacing-lg);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--fc-text-primary, #1f2937);
+  letter-spacing: -0.01em;
+}
+
+.fc-skill-group__container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Vertical layout (default) */
+.fc-skill-group--vertical .fc-skill-group__container {
+  flex-direction: column;
+}
+
+/* Grid layout */
+.fc-skill-group--grid .fc-skill-group__container {
+  display: grid;
+  grid-template-columns: repeat(var(--fc-skill-group-columns, 2), 1fr);
+  gap: var(--fc-spacing-lg);
+}
+
+/* ==========================================================================
+   8. TIMELINE — .fc-timeline
+   ========================================================================== */
+
+.fc-timeline {
+  position: relative;
+  padding: var(--fc-spacing-lg) 0;
+}
+
+.fc-timeline__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--fc-timeline-line-width, 3px);
+  background: var(--fc-timeline-line-color, #e5e7eb);
+  border-radius: 9999px;
+}
+
+.fc-timeline__entries {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fc-spacing-xl);
+}
+
+/* Layout: left-aligned — dot on left, card stretches right */
+.fc-timeline--left .fc-timeline__line {
+  left: calc(var(--fc-timeline-dot-size, 16px) / 2);
+  transform: translateX(-50%);
+}
+
+.fc-timeline--left .fc-timeline-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.fc-timeline--left .fc-timeline-entry__marker {
+  flex-shrink: 0;
+  order: 0;
+  padding-top: 0.25rem;
+}
+
+.fc-timeline--left .fc-timeline-entry__card {
+  flex: 1;
+  text-align: left;
+}
+
+/* Layout: right-aligned */
+.fc-timeline--right .fc-timeline__line {
+  left: auto;
+  right: var(--fc-timeline-dot-size, 16px);
+  transform: translateX(50%);
+}
+
+/* Compact variant */
+.fc-timeline--compact {
+  padding: var(--fc-spacing-sm) 0;
+}
+
+.fc-timeline--compact .fc-timeline__entries {
+  gap: var(--fc-spacing-md);
+}
+
+/* ==========================================================================
+   9. TIMELINE ENTRY — .fc-timeline-entry
+   ========================================================================== */
+
+.fc-timeline-entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--fc-spacing-lg);
+  align-items: start;
+}
+
+/* Marker (dot + connecting line) */
+.fc-timeline-entry__marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  grid-column: 2;
+  padding-top: 0.25rem;
+}
+
+.fc-timeline-entry__dot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fc-timeline-dot-size, 16px);
+  height: var(--fc-timeline-dot-size, 16px);
+  background: var(--fc-timeline-dot-color, var(--fc-primary));
+  border: var(--fc-timeline-dot-border, 3px solid var(--fc-background));
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--fc-timeline-dot-color, var(--fc-primary));
+  transition:
+    transform var(--fc-transition-base),
+    box-shadow var(--fc-transition-base);
+  flex-shrink: 0;
+}
+
+.fc-timeline-entry:hover .fc-timeline-entry__dot {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 4px var(--fc-timeline-dot-color, var(--fc-primary));
+}
+
+.fc-timeline-entry__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.fc-timeline-entry__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.fc-timeline-entry__line {
+  flex: 1;
+  width: var(--fc-timeline-line-width, 3px);
+  background: transparent;
+}
+
+/* Card */
+.fc-timeline-entry__card {
+  background: var(--fc-timeline-card-bg, var(--fc-card-bg));
+  border-radius: var(--fc-card-radius, 12px);
+  box-shadow: var(--fc-timeline-card-shadow, var(--fc-card-shadow));
+  padding: var(--fc-card-padding, 1.5rem);
+  transition:
+    box-shadow var(--fc-transition-base),
+    transform var(--fc-transition-base);
+}
+
+.fc-timeline-entry:hover .fc-timeline-entry__card {
+  box-shadow: var(--fc-card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Alternating layout: left entry — card on the left, marker center */
+.fc-timeline--alternating .fc-timeline-entry--left .fc-timeline-entry__card {
+  grid-column: 1;
+  grid-row: 1;
+  text-align: right;
+}
+
+.fc-timeline--alternating .fc-timeline-entry--left .fc-timeline-entry__marker {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Alternating layout: right entry — card on the right */
+.fc-timeline--alternating .fc-timeline-entry--right .fc-timeline-entry__card,
+.fc-timeline-entry--right .fc-timeline-entry__card {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.fc-timeline--alternating .fc-timeline-entry--right .fc-timeline-entry__marker,
+.fc-timeline-entry--right .fc-timeline-entry__marker {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Highlighted entry */
+.fc-timeline-entry--highlighted .fc-timeline-entry__card {
+  border-left: 4px solid var(--fc-primary, #3498db);
+}
+
+.fc-timeline--alternating .fc-timeline-entry--highlighted.fc-timeline-entry--left .fc-timeline-entry__card {
+  border-left: none;
+  border-right: 4px solid var(--fc-primary, #3498db);
+}
+
+/* Content */
+.fc-timeline-entry__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fc-timeline-entry__header {
+  margin-bottom: 0.25rem;
+}
+
+.fc-timeline-entry__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--fc-text-primary, #1f2937);
+  line-height: 1.3;
+}
+
+.fc-timeline-entry__title-link {
+  color: var(--fc-primary, #3498db);
+  text-decoration: none;
+  transition: color var(--fc-transition-fast);
+}
+
+.fc-timeline-entry__title-link:hover {
+  color: var(--fc-primary-dark, #2980b9);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fc-timeline-entry__subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--fc-text-secondary, #6b7280);
+  font-weight: 500;
+}
+
+.fc-timeline-entry__date {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--fc-primary, #3498db);
+  letter-spacing: 0.02em;
+}
+
+.fc-timeline-entry__description {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: var(--fc-line-height);
+  color: var(--fc-text-secondary, #6b7280);
+}
+
+.fc-timeline-entry__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+}
+
+.fc-timeline-entry__tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: var(--fc-tag-bg, #f3f4f6);
+  color: var(--fc-tag-color, #4b5563);
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   10. THEME TOGGLE — .fc-theme-toggle
+   ========================================================================== */
+
+.fc-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--fc-border, #ecf0f1);
+  border-radius: 9999px;
+  background: var(--fc-surface, #f8f9fa);
+  color: var(--fc-text, #2c3e50);
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+  transition:
+    border-color var(--fc-transition-base),
+    background var(--fc-transition-base),
+    box-shadow var(--fc-transition-base);
+  user-select: none;
+}
+
+.fc-theme-toggle:hover {
+  border-color: var(--fc-primary, #3498db);
+  background: var(--fc-background, #ffffff);
+}
+
+.fc-theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-primary, #3498db) 25%, transparent);
+}
+
+/* Fallback for browsers without focus-visible */
+.fc-theme-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-primary, #3498db) 25%, transparent);
+}
+
+.fc-theme-toggle__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25em;
+  line-height: 1;
+  transition: transform var(--fc-transition-slow);
+}
+
+.fc-theme-toggle:hover .fc-theme-toggle__icon {
+  transform: rotate(15deg);
+}
+
+.fc-theme-toggle__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   11. CONTACT FORM — .fc-contact-form
+   ========================================================================== */
+
+.fc-contact-form {
+  width: 100%;
+  max-width: 640px;
+  font-family: var(--fc-font-family);
+}
+
+/* Status Messages */
+.fc-form-status {
+  margin-bottom: var(--fc-spacing-md);
+  padding: 0;
+  border-radius: var(--fc-form-input-radius, 8px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  transition:
+    padding var(--fc-transition-base),
+    opacity var(--fc-transition-base);
+}
+
+.fc-form-status:empty {
+  display: none;
+}
+
+.fc-form-status--success {
+  display: block;
+  padding: 0.875rem 1rem;
+  background: color-mix(in srgb, var(--fc-form-success-color, #10b981) 12%, transparent);
+  color: var(--fc-form-success-color, #10b981);
+  border: 1px solid color-mix(in srgb, var(--fc-form-success-color, #10b981) 30%, transparent);
+}
+
+.fc-form-status--error {
+  display: block;
+  padding: 0.875rem 1rem;
+  background: color-mix(in srgb, var(--fc-form-error-color, #ef4444) 12%, transparent);
+  color: var(--fc-form-error-color, #ef4444);
+  border: 1px solid color-mix(in srgb, var(--fc-form-error-color, #ef4444) 30%, transparent);
+}
+
+/* Fields Container */
+.fc-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fc-spacing-lg);
+}
+
+/* Individual Field */
+.fc-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fc-spacing-xs);
+}
+
+/* Label */
+.fc-form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--fc-text-primary, #1f2937);
+  margin-bottom: 0.125rem;
+}
+
+.fc-form-required {
+  color: var(--fc-form-error-color, #ef4444);
+  font-weight: 400;
+}
+
+/* Inputs */
+.fc-form-input {
+  width: 100%;
+  padding: var(--fc-form-input-padding, 0.75rem 1rem);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--fc-text, #2c3e50);
+  background: var(--fc-form-input-bg, #ffffff);
+  border: 2px solid var(--fc-form-input-border, #d1d5db);
+  border-radius: var(--fc-form-input-radius, 8px);
+  transition:
+    border-color var(--fc-transition-base),
+    box-shadow var(--fc-transition-base),
+    background var(--fc-transition-base);
+  appearance: none;
+}
+
+.fc-form-input::placeholder {
+  color: var(--fc-text-muted, #7f8c8d);
+  opacity: 0.7;
+}
+
+.fc-form-input:hover {
+  border-color: color-mix(in srgb, var(--fc-form-input-focus-border) 50%, var(--fc-form-input-border));
+}
+
+.fc-form-input:focus {
+  outline: none;
+  border-color: var(--fc-form-input-focus-border, var(--fc-primary));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-form-input-focus-border, var(--fc-primary)) 15%, transparent);
+}
+
+/* Textarea */
+.fc-form-field--textarea .fc-form-input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Select */
+.fc-form-field--select .fc-form-input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* Error state */
+.fc-form-input--error {
+  border-color: var(--fc-form-error-color, #ef4444);
+}
+
+.fc-form-input--error:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-form-error-color, #ef4444) 15%, transparent);
+  border-color: var(--fc-form-error-color, #ef4444);
+}
+
+/* Field Error Messages */
+.fc-form-error {
+  font-size: 0.8125rem;
+  color: var(--fc-form-error-color, #ef4444);
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--fc-transition-fast),
+    transform var(--fc-transition-fast);
+}
+
+.fc-form-error--visible {
+  opacity: 1;
+  transform: translateY(0);
+  min-height: 1.25em;
+}
+
+/* Submit Container */
+.fc-form-submit {
+  margin-top: var(--fc-spacing-lg);
+}
+
+/* Submit Button */
+.fc-form-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 2rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--fc-form-button-bg, var(--fc-primary));
+  border: none;
+  border-radius: var(--fc-form-input-radius, 8px);
+  cursor: pointer;
+  transition:
+    background var(--fc-transition-base),
+    transform var(--fc-transition-fast),
+    box-shadow var(--fc-transition-base);
+}
+
+.fc-form-button:hover {
+  background: var(--fc-form-button-hover-bg, var(--fc-primary-dark));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--fc-primary) 35%, transparent);
+}
+
+.fc-form-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.fc-form-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-primary) 30%, transparent);
+}
+
+.fc-form-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading state */
+.fc-form-button--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.fc-form-button--loading::after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: fc-spin 0.6s linear infinite;
+}
+
+.fc-contact-form--loading {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   12. SCROLL ANIMATOR — .fc-animate-in
+   ========================================================================== */
+
+/* Elements observed by ScrollAnimator start hidden */
+[data-foliocraft-id] {
+  /* Optional: components can set their own initial state via JS */
+}
+
+.fc-animate-in {
+  animation: fc-fade-slide-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ==========================================================================
+   13. ANIMATIONS / KEYFRAMES
+   ========================================================================== */
+
+@keyframes fc-fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fc-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fc-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fc-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================================================
+   14. UTILITY CLASSES
+   ========================================================================== */
+
+.fc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   15. RESPONSIVE BREAKPOINTS
+   Matches BreakpointManager defaults:
+     xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400
+   ========================================================================== */
+
+/* ---- sm (576px) ---- */
+@media (max-width: 575.98px) {
+  /* Project Grid: single column */
+  .fc-project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fc-project-card--featured {
+    grid-column: span 1;
+  }
+
+  /* Timeline: stack vertically, line on the left */
+  .fc-timeline__line {
+    left: var(--fc-timeline-dot-size, 16px);
+    transform: translateX(-50%);
+  }
+
+  .fc-timeline-entry {
+    grid-template-columns: auto 1fr;
+    gap: var(--fc-spacing-md);
+  }
+
+  .fc-timeline-entry__marker {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .fc-timeline-entry__card {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .fc-timeline-entry--left .fc-timeline-entry__card,
+  .fc-timeline-entry--right .fc-timeline-entry__card {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .fc-timeline-entry--left .fc-timeline-entry__marker,
+  .fc-timeline-entry--right .fc-timeline-entry__marker {
+    grid-column: 1;
+  }
+
+  .fc-timeline-entry--highlighted .fc-timeline-entry__card,
+  .fc-timeline-entry--highlighted.fc-timeline-entry--left .fc-timeline-entry__card {
+    border-right: none;
+    border-left: 4px solid var(--fc-primary, #3498db);
+  }
+
+  /* Skill Group grid collapses to single column */
+  .fc-skill-group--grid .fc-skill-group__container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Contact form: full width button */
+  .fc-form-button {
+    width: 100%;
+  }
+
+  /* Card padding tightens */
+  .fc-project-card__content {
+    padding: var(--fc-spacing-md);
+  }
+
+  .fc-timeline-entry__card {
+    padding: var(--fc-spacing-md);
+  }
+}
+
+/* ---- md (768px) ---- */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .fc-project-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .fc-project-card--featured {
+    grid-column: span 1;
+  }
+
+  /* Timeline: line on the left */
+  .fc-timeline__line {
+    left: var(--fc-timeline-dot-size, 16px);
+    transform: translateX(-50%);
+  }
+
+  .fc-timeline-entry {
+    grid-template-columns: auto 1fr;
+    gap: var(--fc-spacing-md);
+  }
+
+  .fc-timeline-entry__marker {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .fc-timeline-entry__card {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .fc-timeline-entry--left .fc-timeline-entry__card,
+  .fc-timeline-entry--right .fc-timeline-entry__card {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .fc-timeline-entry--left .fc-timeline-entry__marker,
+  .fc-timeline-entry--right .fc-timeline-entry__marker {
+    grid-column: 1;
+  }
+
+  .fc-timeline-entry--highlighted .fc-timeline-entry__card,
+  .fc-timeline-entry--highlighted.fc-timeline-entry--left .fc-timeline-entry__card {
+    border-right: none;
+    border-left: 4px solid var(--fc-primary, #3498db);
+  }
+}
+
+/* ---- md (768px+) ---- */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .fc-project-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- lg (992px+) ---- */
+@media (min-width: 992px) {
+  .fc-project-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---- xl (1200px+) ---- */
+@media (min-width: 1200px) {
+  .fc-project-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fc-contact-form {
+    max-width: 720px;
+  }
+}
+
+/* ==========================================================================
+   16. REDUCED MOTION — respect user preference
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .fc-project-card:hover {
+    transform: none;
+  }
+
+  .fc-skill-bar__fill {
+    transition: none;
+  }
+
+  .fc-theme-toggle:hover .fc-theme-toggle__icon {
+    transform: none;
+  }
+
+  .fc-animate-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   17. PRINT STYLES
+   ========================================================================== */
+
+@media print {
+  .fc-theme-toggle {
+    display: none;
+  }
+
+  .fc-project-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .fc-project-card:hover {
+    transform: none;
+  }
+
+  .fc-timeline-entry__card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .fc-skill-bar__fill {
+    print-color-adjust: exact;
+  }
+
+  .fc-skill-bar__track {
+    print-color-adjust: exact;
+  }
+}
