@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FolioCraft - Portfolio Component Library Demo</title>
+  <link rel="stylesheet" href="src/styles/foliocraft.css">
+  <style>
+    /* Demo-specific layout styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--fc-background, #ffffff);
+      color: var(--fc-text, #1f2937);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Sticky Nav */
+    .demo-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--fc-background, #ffffff);
+      border-bottom: 1px solid var(--fc-border, #e5e7eb);
+      backdrop-filter: blur(12px);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .demo-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .demo-nav__brand {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--fc-text, #1f2937);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .demo-nav__brand span { color: var(--fc-primary, #3b82f6); }
+
+    .demo-nav__links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .demo-nav__links a {
+      color: var(--fc-text-muted, #6b7280);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .demo-nav__links a:hover { color: var(--fc-primary, #3b82f6); }
+
+    @media (max-width: 640px) {
+      .demo-nav__links a:not(.demo-nav__theme) { display: none; }
+    }
+
+    /* Hero */
+    .demo-hero {
+      padding: 6rem 0 4rem;
+      text-align: center;
+    }
+
+    .demo-hero__badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--fc-primary, #3b82f6);
+      background: var(--fc-primary, #3b82f6)10;
+      border: 1px solid var(--fc-primary, #3b82f6)30;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .demo-hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--fc-text, #1f2937) 0%, var(--fc-primary, #3b82f6) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .demo-hero p {
+      font-size: 1.15rem;
+      color: var(--fc-text-muted, #6b7280);
+      max-width: 560px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    .demo-hero__stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2.5rem;
+    }
+
+    .demo-hero__stat {
+      text-align: center;
+    }
+
+    .demo-hero__stat-value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fc-primary, #3b82f6);
+    }
+
+    .demo-hero__stat-label {
+      font-size: 0.8rem;
+      color: var(--fc-text-muted, #6b7280);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Sections */
+    .demo-section {
+      padding: 5rem 0;
+    }
+
+    .demo-section + .demo-section {
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+    }
+
+    .demo-section__header {
+      margin-bottom: 2.5rem;
+    }
+
+    .demo-section__header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-section__header p {
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 1rem;
+    }
+
+    /* Projects grid */
+    #projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Filter buttons */
+    .demo-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .demo-filter-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid var(--fc-border, #e5e7eb);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--fc-text-muted, #6b7280);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .demo-filter-btn:hover,
+    .demo-filter-btn--active {
+      background: var(--fc-primary, #3b82f6);
+      border-color: var(--fc-primary, #3b82f6);
+      color: white;
+    }
+
+    /* Skills layout */
+    .demo-skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    @media (max-width: 640px) {
+      .demo-skills-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Contact layout */
+    .demo-contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .demo-contact-grid { grid-template-columns: 1fr; }
+    }
+
+    .demo-contact-info {
+      padding: 2rem 0;
+    }
+
+    .demo-contact-info h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .demo-contact-info p {
+      color: var(--fc-text-muted, #6b7280);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .demo-contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 0.9rem;
+    }
+
+    .demo-contact-detail span:first-child {
+      font-size: 1.25rem;
+      width: 2rem;
+      text-align: center;
+    }
+
+    /* Footer */
+    .demo-footer {
+      padding: 2.5rem 0;
+      text-align: center;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 0.85rem;
+    }
+
+    .demo-footer a {
+      color: var(--fc-primary, #3b82f6);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#" class="demo-nav__brand">Folio<span>Craft</span></a>
+      <ul class="demo-nav__links">
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="docs.html">Docs</a></li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><div id="theme-toggle" class="demo-nav__theme"></div></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="demo-hero">
+    <div class="container">
+      <div class="demo-hero__badge">Open Source Library</div>
+      <h1>Build Stunning Portfolios<br>With Zero Dependencies</h1>
+      <p>FolioCraft is a lightweight vanilla JavaScript component library for building interactive, responsive portfolio sections. No React, no Vue — just clean, fast components.</p>
+      <div class="demo-hero__stats">
+        <div class="demo-hero__stat">
+          <span class="demo-hero__stat-value">0</span>
+          <span class="demo-hero__stat-label">Dependencies</span>
+        </div>
+        <div class="demo-hero__stat">
+          <span class="demo-hero__stat-value">10+</span>
+          <span class="demo-hero__stat-label">Components</span>
+        </div>
+        <div class="demo-hero__stat">
+          <span class="demo-hero__stat-value">&lt;15KB</span>
+          <span class="demo-hero__stat-label">Gzipped</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <!-- Projects -->
+    <section id="projects" class="demo-section">
+      <div class="demo-section__header">
+        <h2>Projects</h2>
+        <p>Interactive project cards with hover animations and tag filtering.</p>
+      </div>
+      <div class="demo-filters" id="project-filters"></div>
+      <div id="projects-grid"></div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="demo-section">
+      <div class="demo-section__header">
+        <h2>Skills</h2>
+        <p>Animated progress bars that fill on scroll with customizable colors.</p>
+      </div>
+      <div class="demo-skills-grid">
+        <div id="skills-frontend"></div>
+        <div id="skills-backend"></div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience" class="demo-section">
+      <div class="demo-section__header">
+        <h2>Experience</h2>
+        <p>Chronological timeline with scroll-triggered animations.</p>
+      </div>
+      <div id="timeline"></div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="demo-section">
+      <div class="demo-section__header">
+        <h2>Get In Touch</h2>
+        <p>Fully validated contact form with real-time error feedback.</p>
+      </div>
+      <div class="demo-contact-grid">
+        <div class="demo-contact-info">
+          <h3>Let's work together</h3>
+          <p>This contact form demonstrates FolioCraft's built-in form validation with accessible error messages, loading states, and success feedback.</p>
+          <div class="demo-contact-detail">
+            <span>&#9993;</span>
+            <span>hello@example.com</span>
+          </div>
+          <div class="demo-contact-detail">
+            <span>&#9742;</span>
+            <span>+1 (555) 123-4567</span>
+          </div>
+          <div class="demo-contact-detail">
+            <span>&#9873;</span>
+            <span>San Francisco, CA</span>
+          </div>
+        </div>
+        <div id="contact-form"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="demo-footer">
+    <div class="container">
+      Built with <a href="#">FolioCraft</a> &mdash; zero-dependency portfolio components
+    </div>
+  </footer>
+
+  <script type="module">
+    import { ThemeManager } from './src/theme/ThemeManager.js';
+    import { ThemeToggle } from './src/theme/ThemeToggle.js';
+    import { ProjectCard } from './src/components/ProjectCard.js';
+    import SkillGroup from './src/components/SkillGroup.js';
+    import Timeline from './src/components/Timeline.js';
+    import { ContactForm } from './src/forms/ContactForm.js';
+
+    // ---- Theme ----
+    const themeManager = new ThemeManager();
+    new ThemeToggle(themeManager, {
+      container: document.getElementById('theme-toggle')
+    });
+
+    // ---- Projects ----
+    const projects = [
+      {
+        title: 'E-Commerce Platform',
+        description: 'Full-stack marketplace with real-time inventory management, Stripe payments, and an admin dashboard.',
+        tags: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
+        links: { demo: '#', source: '#' }
+      },
+      {
+        title: 'Weather Dashboard',
+        description: 'Interactive weather visualization app with 7-day forecasts, location search, and responsive charts.',
+        tags: ['Vue.js', 'D3.js', 'API', 'CSS'],
+        links: { demo: '#', source: '#' }
+      },
+      {
+        title: 'Task Manager CLI',
+        description: 'Developer-focused productivity tool for managing projects and tasks from the terminal.',
+        tags: ['Python', 'SQLite', 'CLI'],
+        links: { source: '#' }
+      },
+      {
+        title: 'Real-Time Chat App',
+        description: 'WebSocket-powered chat application with rooms, file sharing, and message encryption.',
+        tags: ['React', 'Node.js', 'WebSocket', 'MongoDB'],
+        links: { demo: '#', source: '#' }
+      },
+      {
+        title: 'Design System',
+        description: 'Component library with tokens, accessibility baked in, and comprehensive Storybook documentation.',
+        tags: ['React', 'CSS', 'Storybook'],
+        links: { demo: '#', source: '#' }
+      },
+      {
+        title: 'ML Pipeline Runner',
+        description: 'Automated machine learning pipeline with model versioning, evaluation metrics, and deployment tools.',
+        tags: ['Python', 'Docker', 'API'],
+        links: { source: '#' }
+      }
+    ];
+
+    const grid = document.getElementById('projects-grid');
+    const cards = [];
+
+    projects.forEach((project, i) => {
+      const card = new ProjectCard(project);
+      const el = card.render();
+      grid.appendChild(el);
+      cards.push({ card, project });
+      setTimeout(() => card.reveal(), 100 * i);
+    });
+
+    // Tag filters
+    const allTags = [...new Set(projects.flatMap(p => p.tags))].sort();
+    const filtersEl = document.getElementById('project-filters');
+
+    const allBtn = document.createElement('button');
+    allBtn.className = 'demo-filter-btn demo-filter-btn--active';
+    allBtn.textContent = 'All';
+    allBtn.addEventListener('click', () => filterProjects(null));
+    filtersEl.appendChild(allBtn);
+
+    allTags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'demo-filter-btn';
+      btn.textContent = tag;
+      btn.addEventListener('click', () => filterProjects(tag));
+      filtersEl.appendChild(btn);
+    });
+
+    function filterProjects(tag) {
+      document.querySelectorAll('.demo-filter-btn').forEach(b => b.classList.remove('demo-filter-btn--active'));
+      const btns = document.querySelectorAll('.demo-filter-btn');
+      if (!tag) {
+        btns[0].classList.add('demo-filter-btn--active');
+      } else {
+        btns.forEach(b => { if (b.textContent === tag) b.classList.add('demo-filter-btn--active'); });
+      }
+
+      cards.forEach(({ card, project }) => {
+        const el = card.element;
+        const show = !tag || project.tags.includes(tag);
+        el.style.transition = 'opacity 0.3s, transform 0.3s';
+        if (show) {
+          el.style.display = '';
+          requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+        } else {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(10px)';
+          setTimeout(() => { if (el.style.opacity === '0') el.style.display = 'none'; }, 300);
+        }
+      });
+    }
+
+    // ---- Skills ----
+    const frontendGroup = new SkillGroup({
+      title: 'Frontend',
+      skills: [
+        { name: 'JavaScript', level: 92, color: '#f0db4f' },
+        { name: 'React / Next.js', level: 88, color: '#61dafb' },
+        { name: 'CSS / Tailwind', level: 85, color: '#38bdf8' },
+        { name: 'TypeScript', level: 80, color: '#3178c6' },
+      ]
+    });
+    document.getElementById('skills-frontend').appendChild(frontendGroup.render());
+
+    const backendGroup = new SkillGroup({
+      title: 'Backend',
+      skills: [
+        { name: 'Node.js', level: 88, color: '#68a063' },
+        { name: 'Python', level: 82, color: '#3776ab' },
+        { name: 'PostgreSQL', level: 75, color: '#336791' },
+        { name: 'Docker / DevOps', level: 70, color: '#2496ed' },
+      ]
+    });
+    document.getElementById('skills-backend').appendChild(backendGroup.render());
+
+    // ---- Timeline ----
+    const timeline = new Timeline({
+      layout: 'left',
+      entries: [
+        {
+          title: 'Senior Frontend Engineer',
+          subtitle: 'Acme Corp',
+          date: '2023',
+          dateEnd: 'Present',
+          description: 'Leading the design system team, mentoring junior developers, and driving frontend architecture decisions across 3 product teams.',
+          tags: ['React', 'TypeScript', 'Design Systems'],
+          dotColor: '#3b82f6'
+        },
+        {
+          title: 'Full-Stack Developer',
+          subtitle: 'StartupXYZ',
+          date: '2020',
+          dateEnd: '2023',
+          description: 'Built customer-facing dashboards and internal tooling from scratch. Grew the platform from 0 to 50K monthly active users.',
+          tags: ['Vue.js', 'Node.js', 'AWS'],
+          dotColor: '#10b981'
+        },
+        {
+          title: 'Junior Developer',
+          subtitle: 'Digital Agency',
+          date: '2018',
+          dateEnd: '2020',
+          description: 'Delivered responsive websites and landing pages for 20+ clients. Introduced component-based architecture to the team.',
+          tags: ['HTML/CSS', 'JavaScript', 'WordPress'],
+          dotColor: '#8b5cf6'
+        }
+      ]
+    });
+    timeline.mount('#timeline');
+
+    // ---- Contact Form ----
+    const contactForm = new ContactForm({
+      onSubmit: async (data) => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        console.log('Form submitted:', data);
+      }
+    });
+    document.getElementById('contact-form').appendChild(contactForm.render());
+  </script>
+
+</body>
+</html>
