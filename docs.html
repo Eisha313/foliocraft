@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FolioCraft — Documentation</title>
+  <link rel="stylesheet" href="src/styles/foliocraft.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--fc-background, #fff);
+      color: var(--fc-text, #1f2937);
+      line-height: 1.7;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Layout */
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 860px) {
+      .docs-layout { grid-template-columns: 1fr; }
+      .docs-sidebar { display: none; }
+    }
+
+    /* Sidebar */
+    .docs-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem 1.25rem;
+      border-right: 1px solid var(--fc-border, #e5e7eb);
+      background: var(--fc-surface, #f8f9fa);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .docs-sidebar__brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--fc-text, #1f2937);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .docs-sidebar__brand span { color: var(--fc-primary, #3498db); }
+
+    .docs-sidebar__sub {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fc-text-muted, #6b7280);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .docs-sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .docs-sidebar__heading {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fc-text-muted, #6b7280);
+      margin: 1.25rem 0 0.4rem;
+      font-weight: 600;
+    }
+
+    .docs-sidebar a {
+      display: block;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.825rem;
+      color: var(--fc-text-muted, #6b7280);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .docs-sidebar a:hover {
+      color: var(--fc-primary, #3498db);
+      background: var(--fc-primary, #3498db)0d;
+    }
+
+    .docs-sidebar__actions {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .docs-sidebar__actions a {
+      font-weight: 500;
+    }
+
+    /* Main content */
+    .docs-main {
+      padding: 3rem 3rem 6rem;
+      max-width: 820px;
+    }
+
+    @media (max-width: 860px) {
+      .docs-main { padding: 2rem 1.5rem 4rem; }
+    }
+
+    /* Typography */
+    .docs-main h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+    }
+
+    .docs-main h1 span { color: var(--fc-primary, #3498db); }
+
+    .docs-main > .docs-lead {
+      font-size: 1.1rem;
+      color: var(--fc-text-muted, #6b7280);
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    .docs-main h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 3.5rem 0 0.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      letter-spacing: -0.02em;
+    }
+
+    .docs-main h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+
+    .docs-main h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 2rem 0 0.5rem;
+      color: var(--fc-text, #1f2937);
+    }
+
+    .docs-main h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.4rem;
+      color: var(--fc-text-muted, #6b7280);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
+    }
+
+    .docs-main p {
+      margin-bottom: 1rem;
+    }
+
+    .docs-main ul, .docs-main ol {
+      margin: 0 0 1rem 1.5rem;
+    }
+
+    .docs-main li {
+      margin-bottom: 0.3rem;
+    }
+
+    .docs-main strong { font-weight: 600; }
+
+    /* Code */
+    code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.85em;
+      background: var(--fc-surface, #f3f4f6);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--fc-accent, #e74c3c);
+      transition: background-color 0.3s;
+    }
+
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 0.75rem 0 1.5rem;
+      font-size: 0.825rem;
+      line-height: 1.65;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .code-comment { color: #64748b; }
+    .code-keyword { color: #c084fc; }
+    .code-string { color: #86efac; }
+    .code-number { color: #fbbf24; }
+    .code-class { color: #67e8f9; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      background: var(--fc-surface, #f8f9fa);
+      border-bottom: 2px solid var(--fc-border, #e5e7eb);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--fc-text-muted, #6b7280);
+    }
+
+    td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--fc-border, #e5e7eb);
+      vertical-align: top;
+    }
+
+    td code {
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    /* Callouts */
+    .docs-tip {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.9rem;
+      border-left: 4px solid;
+    }
+
+    .docs-tip--info {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1e40af;
+    }
+
+    .docs-tip--warning {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+
+    body.fc-theme-dark .docs-tip--info { background: #1e3a5f; color: #93c5fd; }
+    body.fc-theme-dark .docs-tip--warning { background: #451a03; color: #fcd34d; }
+    body.fc-theme-dark code { color: #fb923c; }
+
+    /* Theme toggle in sidebar */
+    #docs-theme-toggle { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="docs-layout">
+
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+      <a href="index.html" class="docs-sidebar__brand">Folio<span>Craft</span></a>
+      <span class="docs-sidebar__sub">Documentation v1.0</span>
+
+      <nav>
+        <div class="docs-sidebar__heading">Getting Started</div>
+        <a href="#installation">Installation</a>
+        <a href="#quick-start">Quick Start</a>
+        <a href="#theming">Theming</a>
+
+        <div class="docs-sidebar__heading">Components</div>
+        <a href="#project-card">ProjectCard</a>
+        <a href="#skill-bar">SkillBar</a>
+        <a href="#skill-group">SkillGroup</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#contact-form">ContactForm</a>
+        <a href="#theme-toggle">ThemeToggle</a>
+
+        <div class="docs-sidebar__heading">Utilities</div>
+        <a href="#event-emitter">EventEmitter</a>
+        <a href="#scroll-animator">ScrollAnimator</a>
+        <a href="#breakpoint-manager">BreakpointManager</a>
+        <a href="#form-validator">FormValidator</a>
+
+        <div class="docs-sidebar__heading">Advanced</div>
+        <a href="#css-variables">CSS Variables</a>
+        <a href="#building">Building</a>
+      </nav>
+
+      <div class="docs-sidebar__actions">
+        <a href="index.html">&#8592; Live Demo</a>
+        <a href="examples.html">Examples</a>
+        <a href="#" id="docs-theme-toggle">Toggle Theme</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-main">
+
+      <h1>Folio<span>Craft</span> Docs</h1>
+      <p class="docs-lead">
+        A zero-dependency vanilla JavaScript component library for building interactive, responsive portfolio websites.
+        Every component renders to the DOM directly — no React, no build step required.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="installation">Installation</h2>
+
+      <h3>Option 1: Script Tag (CDN / Local)</h3>
+      <p>Include the CSS and JS bundle in your HTML:</p>
+<pre><code>&lt;link rel="stylesheet" href="dist/foliocraft.css"&gt;
+&lt;script src="dist/foliocraft.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  <span class="code-keyword">const</span> card = <span class="code-keyword">new</span> <span class="code-class">FolioCraft</span>.<span class="code-class">ProjectCard</span>({
+    title: <span class="code-string">'My Project'</span>,
+    description: <span class="code-string">'Built with love'</span>,
+    tags: [<span class="code-string">'JS'</span>, <span class="code-string">'CSS'</span>]
+  });
+  document.getElementById(<span class="code-string">'app'</span>).appendChild(card.render());
+&lt;/script&gt;</code></pre>
+
+      <h3>Option 2: ES Modules</h3>
+      <p>Import individual components for tree-shaking:</p>
+<pre><code><span class="code-keyword">import</span> { <span class="code-class">ProjectCard</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/components/ProjectCard.js'</span>;
+<span class="code-keyword">import</span> { <span class="code-class">ThemeManager</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/theme/ThemeManager.js'</span>;
+<span class="code-keyword">import</span> <span class="code-class">SkillGroup</span> <span class="code-keyword">from</span> <span class="code-string">'./src/components/SkillGroup.js'</span>;</code></pre>
+
+      <h3>Option 3: npm</h3>
+<pre><code>npm install foliocraft</code></pre>
+
+      <div class="docs-tip docs-tip--info">
+        <strong>Note:</strong> Always include <code>foliocraft.css</code> — it provides all component styles, theme variables, and responsive breakpoints.
+      </div>
+
+      <!-- ============================================================ -->
+      <h2 id="quick-start">Quick Start</h2>
+      <p>Every FolioCraft component follows the same pattern:</p>
+      <ol>
+        <li><strong>Create</strong> an instance with an options object</li>
+        <li><strong>Render</strong> it to get a DOM element</li>
+        <li><strong>Append</strong> the element to your page</li>
+      </ol>
+<pre><code><span class="code-comment">// 1. Create</span>
+<span class="code-keyword">const</span> card = <span class="code-keyword">new</span> <span class="code-class">ProjectCard</span>({
+  title: <span class="code-string">'My App'</span>,
+  description: <span class="code-string">'A cool project'</span>,
+  tags: [<span class="code-string">'React'</span>, <span class="code-string">'Node'</span>],
+  links: { demo: <span class="code-string">'https://example.com'</span> }
+});
+
+<span class="code-comment">// 2. Render → returns an HTMLElement</span>
+<span class="code-keyword">const</span> element = card.render();
+
+<span class="code-comment">// 3. Append to the page</span>
+document.getElementById(<span class="code-string">'my-container'</span>).appendChild(element);
+
+<span class="code-comment">// Optional: trigger the reveal animation</span>
+card.reveal();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="theming">Theming</h2>
+      <p>FolioCraft ships with light and dark themes managed by <code>ThemeManager</code>. It respects the user's system preference, persists the choice to <code>localStorage</code>, and applies CSS custom properties to <code>:root</code>.</p>
+
+<pre><code><span class="code-keyword">import</span> { <span class="code-class">ThemeManager</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/theme/ThemeManager.js'</span>;
+<span class="code-keyword">import</span> { <span class="code-class">ThemeToggle</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/theme/ThemeToggle.js'</span>;
+
+<span class="code-keyword">const</span> theme = <span class="code-keyword">new</span> <span class="code-class">ThemeManager</span>();
+
+<span class="code-comment">// Programmatic control</span>
+theme.setTheme(<span class="code-string">'dark'</span>);
+theme.toggle();
+theme.isDark();  <span class="code-comment">// true</span>
+
+<span class="code-comment">// Listen for changes</span>
+theme.on(<span class="code-string">'themeChange'</span>, ({ theme, previousTheme }) =&gt; {
+  console.log(<span class="code-string">`Switched from ${previousTheme} to ${theme}`</span>);
+});
+
+<span class="code-comment">// Drop-in toggle button</span>
+<span class="code-keyword">new</span> <span class="code-class">ThemeToggle</span>(theme, {
+  container: document.getElementById(<span class="code-string">'toggle-mount'</span>)
+});</code></pre>
+
+      <h3>Custom Themes</h3>
+<pre><code>theme.registerTheme(<span class="code-string">'ocean'</span>, {
+  <span class="code-string">'--fc-primary'</span>: <span class="code-string">'#0ea5e9'</span>,
+  <span class="code-string">'--fc-background'</span>: <span class="code-string">'#0c1222'</span>,
+  <span class="code-string">'--fc-surface'</span>: <span class="code-string">'#162032'</span>,
+  <span class="code-string">'--fc-text'</span>: <span class="code-string">'#e0f2fe'</span>,
+});
+theme.setTheme(<span class="code-string">'ocean'</span>);</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="project-card">ProjectCard</h2>
+      <p>A card component for showcasing portfolio projects. Includes image support, tags, links, hover animations, and a reveal animation on scroll.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td><code>'Project Title'</code></td><td>Project name</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td><code>''</code></td><td>Project description</td></tr>
+          <tr><td><code>image</code></td><td>string</td><td><code>null</code></td><td>Image URL for the card header</td></tr>
+          <tr><td><code>tags</code></td><td>string[]</td><td><code>[]</code></td><td>Technology/skill tags</td></tr>
+          <tr><td><code>links</code></td><td>object</td><td><code>{}</code></td><td>Links object: <code>{ demo, source, caseStudy }</code></td></tr>
+          <tr><td><code>featured</code></td><td>boolean</td><td><code>false</code></td><td>Spans 2 columns in a grid</td></tr>
+          <tr><td><code>lazyLoad</code></td><td>boolean</td><td><code>true</code></td><td>Lazy-load the image via IntersectionObserver</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Methods</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render()</code></td><td>HTMLElement</td><td>Creates and returns the card element</td></tr>
+          <tr><td><code>reveal()</code></td><td>Promise</td><td>Plays the fade-in + slide-up animation</td></tr>
+          <tr><td><code>update(newConfig)</code></td><td>this</td><td>Updates the card with new options and re-renders</td></tr>
+          <tr><td><code>destroy()</code></td><td>void</td><td>Removes from DOM and cleans up listeners</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Events</h4>
+      <table>
+        <thead><tr><th>Event</th><th>Payload</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>hover</code></td><td><code>{ card, hovered }</code></td><td>Fired on mouse enter/leave</td></tr>
+          <tr><td><code>revealed</code></td><td><code>{ card }</code></td><td>Fired after reveal animation completes</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">const</span> card = <span class="code-keyword">new</span> <span class="code-class">ProjectCard</span>({
+  title: <span class="code-string">'E-Commerce App'</span>,
+  description: <span class="code-string">'Full-stack marketplace with Stripe integration.'</span>,
+  image: <span class="code-string">'./screenshots/ecommerce.png'</span>,
+  tags: [<span class="code-string">'React'</span>, <span class="code-string">'Node.js'</span>, <span class="code-string">'Stripe'</span>],
+  links: {
+    demo: <span class="code-string">'https://myapp.com'</span>,
+    source: <span class="code-string">'https://github.com/me/myapp'</span>
+  },
+  featured: <span class="code-keyword">true</span>
+});
+
+card.on(<span class="code-string">'hover'</span>, ({ hovered }) =&gt; {
+  console.log(hovered ? <span class="code-string">'Hovering!'</span> : <span class="code-string">'Left'</span>);
+});
+
+document.getElementById(<span class="code-string">'grid'</span>).appendChild(card.render());
+card.reveal();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="skill-bar">SkillBar</h2>
+      <p>An animated progress bar for displaying skill proficiency. Fills from 0 to the target level when scrolled into view, with a counting number animation.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td><code>'Skill'</code></td><td>Skill name displayed as label</td></tr>
+          <tr><td><code>level</code></td><td>number</td><td><code>0</code></td><td>Proficiency 0–100</td></tr>
+          <tr><td><code>color</code></td><td>string</td><td>theme primary</td><td>Custom bar fill color</td></tr>
+          <tr><td><code>icon</code></td><td>string</td><td><code>null</code></td><td>Emoji or image URL shown before the name</td></tr>
+          <tr><td><code>category</code></td><td>string</td><td><code>null</code></td><td>Adds a modifier class for styling groups</td></tr>
+          <tr><td><code>showPercentage</code></td><td>boolean</td><td><code>true</code></td><td>Show the numeric percentage</td></tr>
+          <tr><td><code>animate</code></td><td>boolean</td><td><code>true</code></td><td>Animate the fill on scroll</td></tr>
+          <tr><td><code>animationDuration</code></td><td>number</td><td><code>1000</code></td><td>Animation duration in ms</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Methods</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render()</code></td><td>Creates and returns the skill bar element</td></tr>
+          <tr><td><code>updateLevel(newLevel, animate?)</code></td><td>Change the skill level dynamically</td></tr>
+          <tr><td><code>animateProgress()</code></td><td>Manually trigger the fill animation</td></tr>
+          <tr><td><code>destroy()</code></td><td>Clean up observers and remove element</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">import</span> <span class="code-class">SkillBar</span> <span class="code-keyword">from</span> <span class="code-string">'./src/components/SkillBar.js'</span>;
+
+<span class="code-keyword">const</span> bar = <span class="code-keyword">new</span> <span class="code-class">SkillBar</span>({
+  name: <span class="code-string">'JavaScript'</span>,
+  level: <span class="code-number">92</span>,
+  color: <span class="code-string">'#f0db4f'</span>,
+  icon: <span class="code-string">'&#9889;'</span>
+});
+
+document.getElementById(<span class="code-string">'skills'</span>).appendChild(bar.render());
+
+<span class="code-comment">// Update dynamically</span>
+bar.updateLevel(<span class="code-number">95</span>);</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="skill-group">SkillGroup</h2>
+      <p>Groups multiple <code>SkillBar</code> components together with an optional title, staggered animation, and sorting/filtering capabilities.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td><code>null</code></td><td>Group heading</td></tr>
+          <tr><td><code>skills</code></td><td>object[]</td><td><code>[]</code></td><td>Array of SkillBar option objects</td></tr>
+          <tr><td><code>layout</code></td><td>string</td><td><code>'vertical'</code></td><td><code>'vertical'</code> or <code>'grid'</code></td></tr>
+          <tr><td><code>columns</code></td><td>number</td><td><code>2</code></td><td>Grid columns (when layout is <code>'grid'</code>)</td></tr>
+          <tr><td><code>staggerAnimation</code></td><td>boolean</td><td><code>true</code></td><td>Stagger child bar animations</td></tr>
+          <tr><td><code>staggerDelay</code></td><td>number</td><td><code>100</code></td><td>Delay between each bar's animation (ms)</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Methods</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render()</code></td><td>Creates and returns the group element</td></tr>
+          <tr><td><code>addSkill(config)</code></td><td>Add a new skill bar dynamically</td></tr>
+          <tr><td><code>removeSkill(name)</code></td><td>Remove a skill bar by name</td></tr>
+          <tr><td><code>sortByLevel(order?)</code></td><td>Sort skills by level (<code>'asc'</code> or <code>'desc'</code>)</td></tr>
+          <tr><td><code>sortAlphabetically(order?)</code></td><td>Sort skills alphabetically</td></tr>
+          <tr><td><code>filterByLevel(minLevel)</code></td><td>Hide skills below the threshold</td></tr>
+          <tr><td><code>resetFilter()</code></td><td>Show all skills again</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">const</span> group = <span class="code-keyword">new</span> <span class="code-class">SkillGroup</span>({
+  title: <span class="code-string">'Frontend'</span>,
+  skills: [
+    { name: <span class="code-string">'JavaScript'</span>, level: <span class="code-number">92</span>, color: <span class="code-string">'#f0db4f'</span> },
+    { name: <span class="code-string">'React'</span>,      level: <span class="code-number">88</span>, color: <span class="code-string">'#61dafb'</span> },
+    { name: <span class="code-string">'CSS'</span>,        level: <span class="code-number">85</span>, color: <span class="code-string">'#38bdf8'</span> },
+  ],
+  staggerDelay: <span class="code-number">150</span>
+});
+
+container.appendChild(group.render());
+
+<span class="code-comment">// Sort highest first</span>
+group.sortByLevel(<span class="code-string">'desc'</span>);
+
+<span class="code-comment">// Only show 80+</span>
+group.filterByLevel(<span class="code-number">80</span>);</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="timeline">Timeline</h2>
+      <p>A vertical timeline for displaying career history, education, or any chronological data. Supports left-aligned, right-aligned, and alternating layouts with scroll-triggered entry animations.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>entries</code></td><td>object[]</td><td><code>[]</code></td><td>Array of entry data (see below)</td></tr>
+          <tr><td><code>layout</code></td><td>string</td><td><code>'alternating'</code></td><td><code>'alternating'</code>, <code>'left'</code>, or <code>'right'</code></td></tr>
+          <tr><td><code>animated</code></td><td>boolean</td><td><code>true</code></td><td>Animate entries on scroll</td></tr>
+          <tr><td><code>animationDelay</code></td><td>number</td><td><code>100</code></td><td>Stagger delay between entries (ms)</td></tr>
+          <tr><td><code>lineColor</code></td><td>string</td><td>theme default</td><td>Custom color for the timeline line</td></tr>
+          <tr><td><code>compact</code></td><td>boolean</td><td><code>false</code></td><td>Reduce spacing for dense timelines</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Entry Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td>Job title / event name</td></tr>
+          <tr><td><code>subtitle</code></td><td>string</td><td>Company / organization</td></tr>
+          <tr><td><code>date</code></td><td>string</td><td>Start date</td></tr>
+          <tr><td><code>dateEnd</code></td><td>string</td><td>End date (or <code>'Present'</code>)</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td>Details text</td></tr>
+          <tr><td><code>tags</code></td><td>string[]</td><td>Technology/skill tags</td></tr>
+          <tr><td><code>dotColor</code></td><td>string</td><td>Custom color for the timeline dot</td></tr>
+          <tr><td><code>highlighted</code></td><td>boolean</td><td>Add a highlight border to the card</td></tr>
+          <tr><td><code>link</code></td><td>string</td><td>Makes the title a clickable link</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Methods</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render()</code></td><td>Creates and returns the timeline element</td></tr>
+          <tr><td><code>mount(selector)</code></td><td>Render and append to a container (string selector or element)</td></tr>
+          <tr><td><code>addEntry(options)</code></td><td>Add an entry programmatically</td></tr>
+          <tr><td><code>removeEntry(index)</code></td><td>Remove an entry by index</td></tr>
+          <tr><td><code>clearEntries()</code></td><td>Remove all entries</td></tr>
+          <tr><td><code>destroy()</code></td><td>Clean up everything</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">import</span> <span class="code-class">Timeline</span> <span class="code-keyword">from</span> <span class="code-string">'./src/components/Timeline.js'</span>;
+
+<span class="code-keyword">const</span> timeline = <span class="code-keyword">new</span> <span class="code-class">Timeline</span>({
+  layout: <span class="code-string">'left'</span>,
+  entries: [
+    {
+      title: <span class="code-string">'Senior Engineer'</span>,
+      subtitle: <span class="code-string">'Acme Corp'</span>,
+      date: <span class="code-string">'2023'</span>,
+      dateEnd: <span class="code-string">'Present'</span>,
+      description: <span class="code-string">'Led the design system team.'</span>,
+      tags: [<span class="code-string">'React'</span>, <span class="code-string">'TypeScript'</span>],
+      dotColor: <span class="code-string">'#3b82f6'</span>
+    },
+    {
+      title: <span class="code-string">'Full-Stack Dev'</span>,
+      subtitle: <span class="code-string">'StartupXYZ'</span>,
+      date: <span class="code-string">'2020'</span>,
+      dateEnd: <span class="code-string">'2023'</span>,
+      description: <span class="code-string">'Built the platform from 0 to 50K users.'</span>,
+      tags: [<span class="code-string">'Vue'</span>, <span class="code-string">'Node'</span>, <span class="code-string">'AWS'</span>],
+      dotColor: <span class="code-string">'#10b981'</span>
+    }
+  ]
+});
+
+timeline.mount(<span class="code-string">'#experience'</span>);</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="contact-form">ContactForm</h2>
+      <p>A configurable, accessible contact form with built-in validation, loading states, success/error messages, and real-time inline error feedback.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>fields</code></td><td>object[]</td><td>name, email, subject, message</td><td>Custom field definitions (see below)</td></tr>
+          <tr><td><code>submitLabel</code></td><td>string</td><td><code>'Send Message'</code></td><td>Submit button text</td></tr>
+          <tr><td><code>onSubmit</code></td><td>async function</td><td><code>null</code></td><td>Called with form data on valid submit</td></tr>
+          <tr><td><code>showLabels</code></td><td>boolean</td><td><code>true</code></td><td>Show field labels</td></tr>
+          <tr><td><code>inlineErrors</code></td><td>boolean</td><td><code>true</code></td><td>Show per-field error messages</td></tr>
+          <tr><td><code>successMessage</code></td><td>string</td><td><code>'Thank you!...'</code></td><td>Message shown on successful submit</td></tr>
+          <tr><td><code>errorMessage</code></td><td>string</td><td><code>'Please correct...'</code></td><td>Message shown on validation failure</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Field Definition</h4>
+<pre><code>{
+  name: <span class="code-string">'email'</span>,         <span class="code-comment">// field name (required)</span>
+  type: <span class="code-string">'email'</span>,         <span class="code-comment">// 'text', 'email', 'textarea', 'select'</span>
+  label: <span class="code-string">'Email'</span>,        <span class="code-comment">// displayed label</span>
+  placeholder: <span class="code-string">'you@example.com'</span>,
+  required: <span class="code-keyword">true</span>,       <span class="code-comment">// built-in required validation</span>
+  email: <span class="code-keyword">true</span>,          <span class="code-comment">// built-in email format check</span>
+  minLength: <span class="code-number">5</span>,        <span class="code-comment">// minimum character length</span>
+  maxLength: <span class="code-number">200</span>,       <span class="code-comment">// maximum character length</span>
+  pattern: <span class="code-string">/^\d+$/</span>,     <span class="code-comment">// regex pattern validation</span>
+  custom: (val) =&gt; {   <span class="code-comment">// custom validator — return true or error string</span>
+    <span class="code-keyword">return</span> val.includes(<span class="code-string">'@'</span>) || <span class="code-string">'Must contain @'</span>;
+  }
+}</code></pre>
+
+      <h4>Events</h4>
+      <table>
+        <thead><tr><th>Event</th><th>Payload</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>submitted</code></td><td><code>{ data }</code></td><td>Form submitted successfully</td></tr>
+          <tr><td><code>submitError</code></td><td><code>{ error }</code></td><td>onSubmit threw an error</td></tr>
+          <tr><td><code>validationFailed</code></td><td><code>{ fields }</code></td><td>Form validation failed</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">const</span> form = <span class="code-keyword">new</span> <span class="code-class">ContactForm</span>({
+  onSubmit: <span class="code-keyword">async</span> (data) =&gt; {
+    <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/contact'</span>, {
+      method: <span class="code-string">'POST'</span>,
+      headers: { <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span> },
+      body: JSON.stringify(data)
+    });
+  },
+  successMessage: <span class="code-string">'Thanks! I will get back to you soon.'</span>
+});
+
+document.getElementById(<span class="code-string">'contact'</span>).appendChild(form.render());
+
+<span class="code-comment">// Listen for submissions</span>
+form.on(<span class="code-string">'submitted'</span>, ({ data }) =&gt; {
+  console.log(<span class="code-string">'Sent:'</span>, data);
+});
+
+<span class="code-comment">// Pre-fill data</span>
+form.setData({ name: <span class="code-string">'Jane'</span>, email: <span class="code-string">'jane@test.com'</span> });
+
+<span class="code-comment">// Reset the form</span>
+form.reset();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="theme-toggle">ThemeToggle</h2>
+      <p>A drop-in toggle button that connects to <code>ThemeManager</code>. Accessible, with keyboard support and ARIA attributes.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>container</code></td><td>HTMLElement</td><td><code>document.body</code></td><td>Where to append the toggle button</td></tr>
+          <tr><td><code>showLabel</code></td><td>boolean</td><td><code>false</code></td><td>Show text label next to icon</td></tr>
+          <tr><td><code>lightIcon</code></td><td>string</td><td><code>'&#9728;&#65039;'</code></td><td>Icon shown in dark mode (click to go light)</td></tr>
+          <tr><td><code>darkIcon</code></td><td>string</td><td><code>'&#127769;'</code></td><td>Icon shown in light mode (click to go dark)</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">new</span> <span class="code-class">ThemeToggle</span>(themeManager, {
+  container: document.querySelector(<span class="code-string">'nav'</span>),
+  showLabel: <span class="code-keyword">true</span>
+});</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="event-emitter">EventEmitter</h2>
+      <p>Every component extends <code>EventEmitter</code>, giving it <code>.on()</code>, <code>.off()</code>, <code>.once()</code>, and <code>.emit()</code>. You can also use it standalone:</p>
+
+<pre><code><span class="code-keyword">import</span> { <span class="code-class">EventEmitter</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/core/EventEmitter.js'</span>;
+
+<span class="code-keyword">const</span> bus = <span class="code-keyword">new</span> <span class="code-class">EventEmitter</span>();
+
+bus.on(<span class="code-string">'data'</span>, (payload) =&gt; console.log(payload));
+bus.once(<span class="code-string">'init'</span>, () =&gt; console.log(<span class="code-string">'First time only'</span>));
+bus.emit(<span class="code-string">'data'</span>, { id: <span class="code-number">1</span> });
+bus.off(<span class="code-string">'data'</span>, handler);
+bus.removeAllListeners();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="scroll-animator">ScrollAnimator</h2>
+      <p>Wraps <code>IntersectionObserver</code> for scroll-triggered animations. Used internally by SkillBar and Timeline, but also available standalone.</p>
+
+<pre><code><span class="code-keyword">import</span> { <span class="code-class">ScrollAnimator</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/core/ScrollAnimator.js'</span>;
+
+<span class="code-keyword">const</span> animator = <span class="code-keyword">new</span> <span class="code-class">ScrollAnimator</span>({
+  threshold: <span class="code-number">0.2</span>,       <span class="code-comment">// 20% visible before triggering</span>
+  rootMargin: <span class="code-string">'0px'</span>,
+  once: <span class="code-keyword">true</span>,            <span class="code-comment">// animate only the first time</span>
+  animationClass: <span class="code-string">'fc-animate-in'</span>
+});
+
+<span class="code-comment">// Observe individual elements</span>
+animator.observe(document.querySelector(<span class="code-string">'.my-section'</span>));
+
+<span class="code-comment">// Observe all matching elements</span>
+animator.observeAll(<span class="code-string">'.fade-in'</span>);
+
+<span class="code-comment">// With callback</span>
+animator.observe(el, () =&gt; {
+  el.classList.add(<span class="code-string">'visible'</span>);
+});
+
+<span class="code-comment">// Cleanup</span>
+animator.destroy();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="breakpoint-manager">BreakpointManager</h2>
+      <p>Reactive breakpoint detection using <code>matchMedia</code>. Emits events when the viewport crosses a breakpoint boundary.</p>
+
+<pre><code><span class="code-keyword">import</span> <span class="code-class">BreakpointManager</span> <span class="code-keyword">from</span> <span class="code-string">'./src/responsive/BreakpointManager.js'</span>;
+
+<span class="code-keyword">const</span> bp = <span class="code-keyword">new</span> <span class="code-class">BreakpointManager</span>();
+
+bp.getCurrent();           <span class="code-comment">// 'lg'</span>
+bp.getWidth();             <span class="code-comment">// 1024</span>
+bp.is(<span class="code-string">'md'</span>);               <span class="code-comment">// false</span>
+bp.isAtLeast(<span class="code-string">'md'</span>);        <span class="code-comment">// true</span>
+bp.isBetween(<span class="code-string">'sm'</span>, <span class="code-string">'lg'</span>); <span class="code-comment">// true</span>
+
+bp.on(<span class="code-string">'change'</span>, ({ current, previous, width }) =&gt; {
+  console.log(<span class="code-string">`${previous} → ${current} (${width}px)`</span>);
+});
+
+<span class="code-comment">// Default breakpoints: xs:0, sm:576, md:768, lg:992, xl:1200, xxl:1400</span>
+<span class="code-comment">// Add custom ones:</span>
+bp.addBreakpoint(<span class="code-string">'tablet'</span>, <span class="code-number">640</span>);</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="form-validator">FormValidator</h2>
+      <p>Standalone validation engine used by ContactForm. Can be used independently for any form.</p>
+
+<pre><code><span class="code-keyword">import</span> { <span class="code-class">FormValidator</span> } <span class="code-keyword">from</span> <span class="code-string">'./src/forms/FormValidator.js'</span>;
+
+<span class="code-keyword">const</span> v = <span class="code-keyword">new</span> <span class="code-class">FormValidator</span>();
+
+<span class="code-comment">// Define rules per field</span>
+v.addRules(<span class="code-string">'email'</span>, { required: <span class="code-keyword">true</span>, email: <span class="code-keyword">true</span> });
+v.addRules(<span class="code-string">'name'</span>,  { required: <span class="code-keyword">true</span>, minLength: <span class="code-number">2</span> });
+v.addRules(<span class="code-string">'age'</span>,   { custom: (v) =&gt; v >= <span class="code-number">18</span> || <span class="code-string">'Must be 18+'</span> });
+
+<span class="code-comment">// Validate a single field</span>
+v.validateField(<span class="code-string">'email'</span>, <span class="code-string">'bad'</span>);
+<span class="code-comment">// → { valid: false, errors: ['Please enter a valid email address'] }</span>
+
+<span class="code-comment">// Validate all fields at once</span>
+v.validateAll({ email: <span class="code-string">'a@b.com'</span>, name: <span class="code-string">'Jo'</span>, age: <span class="code-number">25</span> });
+<span class="code-comment">// → { valid: true, fields: { email: { valid: true }, ... } }</span>
+
+<span class="code-comment">// Custom error messages</span>
+v.setMessages({ required: <span class="code-string">'This cannot be blank'</span> });</code></pre>
+
+      <p>Built-in validators: <code>required</code>, <code>email</code>, <code>phone</code>, <code>url</code>, <code>minLength</code>, <code>maxLength</code>, <code>pattern</code>, <code>custom</code>.</p>
+
+      <!-- ============================================================ -->
+      <h2 id="css-variables">CSS Variables</h2>
+      <p>FolioCraft is fully themeable via CSS custom properties. Override any variable in your own stylesheet:</p>
+
+<pre><code><span class="code-comment">/* Override in your CSS */</span>
+:root {
+  --fc-primary: <span class="code-string">#6366f1</span>;
+  --fc-primary-dark: <span class="code-string">#4f46e5</span>;
+  --fc-background: <span class="code-string">#fafafa</span>;
+  --fc-card-radius: <span class="code-string">16px</span>;
+  --fc-card-shadow: <span class="code-string">0 2px 8px rgba(0,0,0,0.08)</span>;
+}
+
+<span class="code-comment">/* Component-specific variables */</span>
+:root {
+  --fc-skill-bar-fill: <span class="code-string">#6366f1</span>;       <span class="code-comment">/* default bar color */</span>
+  --fc-timeline-dot-size: <span class="code-string">20px</span>;      <span class="code-comment">/* larger dots */</span>
+  --fc-timeline-line-width: <span class="code-string">4px</span>;     <span class="code-comment">/* thicker line */</span>
+}</code></pre>
+
+      <h3>Full Variable Reference</h3>
+      <table>
+        <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>--fc-primary</code></td><td>Brand / accent color</td></tr>
+          <tr><td><code>--fc-primary-dark</code></td><td>Darker variant for hover states</td></tr>
+          <tr><td><code>--fc-background</code></td><td>Page background</td></tr>
+          <tr><td><code>--fc-surface</code></td><td>Elevated surface (cards, sidebar)</td></tr>
+          <tr><td><code>--fc-text</code></td><td>Primary text color</td></tr>
+          <tr><td><code>--fc-text-muted</code></td><td>Secondary / muted text</td></tr>
+          <tr><td><code>--fc-border</code></td><td>Border color</td></tr>
+          <tr><td><code>--fc-shadow</code></td><td>Base shadow color</td></tr>
+          <tr><td><code>--fc-card-bg</code></td><td>Card background</td></tr>
+          <tr><td><code>--fc-card-radius</code></td><td>Card border radius</td></tr>
+          <tr><td><code>--fc-card-shadow</code></td><td>Card box shadow</td></tr>
+          <tr><td><code>--fc-tag-bg</code></td><td>Tag pill background</td></tr>
+          <tr><td><code>--fc-tag-color</code></td><td>Tag pill text color</td></tr>
+          <tr><td><code>--fc-focus-color</code></td><td>Focus ring color</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ============================================================ -->
+      <h2 id="building">Building</h2>
+      <p>The build script bundles all source files into a UMD bundle + CSS file in <code>dist/</code>:</p>
+
+<pre><code><span class="code-comment"># Build the bundle</span>
+pnpm run build
+
+<span class="code-comment"># Output:</span>
+<span class="code-comment">#   dist/foliocraft.js   — UMD bundle (all components)</span>
+<span class="code-comment">#   dist/foliocraft.css  — compiled stylesheet</span>
+
+<span class="code-comment"># Run tests</span>
+pnpm test
+
+<span class="code-comment"># Dev server with live reload</span>
+pnpm run dev</code></pre>
+
+      <div class="docs-tip docs-tip--info">
+        <strong>UMD bundle:</strong> When loaded via <code>&lt;script&gt;</code> tag, all components are available on the global <code>FolioCraft</code> namespace: <code>FolioCraft.ProjectCard</code>, <code>FolioCraft.Timeline</code>, etc.
+      </div>
+
+      <div class="docs-tip docs-tip--warning">
+        <strong>ES Modules:</strong> For modern projects, import directly from <code>src/</code> for tree-shaking. The UMD bundle includes everything.
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { ThemeManager } from './src/theme/ThemeManager.js';
+
+    const theme = new ThemeManager();
+
+    document.getElementById('docs-theme-toggle').addEventListener('click', (e) => {
+      e.preventDefault();
+      theme.toggle();
+    });
+  </script>
+</body>
+</html>
