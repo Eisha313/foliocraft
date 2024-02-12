@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FolioCraft — Interactive Examples</title>
+  <link rel="stylesheet" href="src/styles/foliocraft.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--fc-background, #fff);
+      color: var(--fc-text, #1f2937);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Nav */
+    .ex-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--fc-background, #fff);
+      border-bottom: 1px solid var(--fc-border, #e5e7eb);
+      backdrop-filter: blur(12px);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .ex-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .ex-nav__brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--fc-text, #1f2937);
+      text-decoration: none;
+    }
+
+    .ex-nav__brand span { color: var(--fc-primary, #3498db); }
+
+    .ex-nav__links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .ex-nav__links a {
+      color: var(--fc-text-muted, #6b7280);
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .ex-nav__links a:hover { color: var(--fc-primary, #3498db); }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+
+    /* Page header */
+    .ex-header {
+      padding: 3.5rem 0 2rem;
+      text-align: center;
+    }
+
+    .ex-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .ex-header p {
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 1.05rem;
+    }
+
+    /* Example blocks */
+    .ex-block {
+      margin: 3rem 0;
+      border: 1px solid var(--fc-border, #e5e7eb);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .ex-block__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--fc-surface, #f8f9fa);
+      border-bottom: 1px solid var(--fc-border, #e5e7eb);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .ex-block__title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .ex-block__tag {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+      background: var(--fc-primary, #3498db);
+      color: #fff;
+    }
+
+    .ex-block__preview {
+      padding: 2rem 1.5rem;
+    }
+
+    .ex-block__code {
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      transition: border-color 0.3s;
+    }
+
+    .ex-block__code-toggle {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1.5rem;
+      background: var(--fc-surface, #f8f9fa);
+      border: none;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .ex-block__code-toggle:hover {
+      color: var(--fc-primary, #3498db);
+    }
+
+    .ex-block__code pre {
+      display: none;
+      margin: 0;
+      border-radius: 0;
+      font-size: 0.8rem;
+    }
+
+    .ex-block__code.open pre { display: block; }
+
+    /* Controls for interactive demos */
+    .ex-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+    }
+
+    .ex-btn {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid var(--fc-border, #e5e7eb);
+      border-radius: 6px;
+      background: var(--fc-background, #fff);
+      color: var(--fc-text, #1f2937);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .ex-btn:hover {
+      border-color: var(--fc-primary, #3498db);
+      color: var(--fc-primary, #3498db);
+    }
+
+    .ex-btn--primary {
+      background: var(--fc-primary, #3498db);
+      border-color: var(--fc-primary, #3498db);
+      color: #fff;
+    }
+
+    .ex-btn--primary:hover {
+      opacity: 0.9;
+      color: #fff;
+    }
+
+    .ex-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--fc-text-muted, #6b7280);
+    }
+
+    .ex-label input[type="range"] {
+      width: 120px;
+    }
+
+    .ex-label select {
+      padding: 0.3rem 0.5rem;
+      border: 1px solid var(--fc-border, #e5e7eb);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      background: var(--fc-background, #fff);
+      color: var(--fc-text, #1f2937);
+    }
+
+    /* Grid for card demos */
+    .ex-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Two-col skills */
+    .ex-skills-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .ex-skills-cols { grid-template-columns: 1fr; }
+    }
+
+    /* Footer */
+    .ex-footer {
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--fc-text-muted, #6b7280);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--fc-border, #e5e7eb);
+      margin-top: 3rem;
+    }
+
+    .ex-footer a {
+      color: var(--fc-primary, #3498db);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="ex-nav">
+    <div class="container">
+      <a href="index.html" class="ex-nav__brand">Folio<span>Craft</span></a>
+      <ul class="ex-nav__links">
+        <li><a href="index.html">Demo</a></li>
+        <li><a href="docs.html">Docs</a></li>
+        <li><a href="examples.html"><strong>Examples</strong></a></li>
+        <li><div id="theme-toggle"></div></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="ex-header">
+    <div class="container">
+      <h1>Interactive Examples</h1>
+      <p>Play with every component live. Tweak options, trigger methods, and see code.</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ========== ProjectCard ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">ProjectCard</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div class="ex-card-grid" id="ex-cards"></div>
+        <div class="ex-controls">
+          <button class="ex-btn ex-btn--primary" id="ex-card-add">+ Add Card</button>
+          <button class="ex-btn" id="ex-card-reveal">Reveal All</button>
+          <button class="ex-btn" id="ex-card-featured">Toggle Featured</button>
+          <button class="ex-btn" id="ex-card-update">Update First Card</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { ProjectCard } from './src/components/ProjectCard.js';
+
+const card = new ProjectCard({
+  title: 'My Project',
+  description: 'Built with modern tools.',
+  tags: ['React', 'Node.js'],
+  links: { demo: '#', source: '#' },
+  featured: false
+});
+
+document.getElementById('grid').appendChild(card.render());
+card.reveal();
+
+// Update dynamically
+card.update({ title: 'Updated Title' });
+
+// Listen for hover
+card.on('hover', ({ hovered }) => console.log(hovered));</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== SkillBar ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">SkillBar &amp; SkillGroup</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div class="ex-skills-cols">
+          <div id="ex-skills-1"></div>
+          <div id="ex-skills-2"></div>
+        </div>
+        <div class="ex-controls">
+          <button class="ex-btn ex-btn--primary" id="ex-skill-randomize">Randomize Levels</button>
+          <button class="ex-btn" id="ex-skill-sort-desc">Sort High → Low</button>
+          <button class="ex-btn" id="ex-skill-sort-alpha">Sort A → Z</button>
+          <button class="ex-btn" id="ex-skill-add">+ Add Skill</button>
+          <label class="ex-label">
+            Filter min:
+            <input type="range" id="ex-skill-filter" min="0" max="100" value="0">
+            <span id="ex-skill-filter-val">0</span>
+          </label>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import SkillGroup from './src/components/SkillGroup.js';
+
+const group = new SkillGroup({
+  title: 'Languages',
+  skills: [
+    { name: 'JavaScript', level: 92, color: '#f0db4f' },
+    { name: 'Python', level: 85, color: '#3776ab' },
+  ],
+  staggerDelay: 150
+});
+
+container.appendChild(group.render());
+
+// Dynamic operations
+group.sortByLevel('desc');
+group.filterByLevel(50);
+group.addSkill({ name: 'Go', level: 60, color: '#00add8' });
+group.resetFilter();</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== Timeline ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">Timeline</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div id="ex-timeline"></div>
+        <div class="ex-controls">
+          <label class="ex-label">
+            Layout:
+            <select id="ex-tl-layout">
+              <option value="left" selected>Left</option>
+              <option value="right">Right</option>
+              <option value="alternating">Alternating</option>
+            </select>
+          </label>
+          <button class="ex-btn ex-btn--primary" id="ex-tl-add">+ Add Entry</button>
+          <button class="ex-btn" id="ex-tl-compact">Toggle Compact</button>
+          <button class="ex-btn" id="ex-tl-clear">Clear All</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import Timeline from './src/components/Timeline.js';
+
+const timeline = new Timeline({
+  layout: 'left', // 'left', 'right', 'alternating'
+  compact: false,
+  entries: [
+    {
+      title: 'Senior Engineer',
+      subtitle: 'Acme Corp',
+      date: '2023', dateEnd: 'Present',
+      description: 'Led the frontend team.',
+      tags: ['React', 'TypeScript'],
+      dotColor: '#3b82f6'
+    }
+  ]
+});
+
+timeline.mount('#container');
+
+// Add entries dynamically
+timeline.addEntry({ title: 'New Role', ... });</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== ContactForm ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">ContactForm</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div style="max-width: 480px;" id="ex-form"></div>
+        <div class="ex-controls">
+          <button class="ex-btn" id="ex-form-prefill">Pre-fill Data</button>
+          <button class="ex-btn" id="ex-form-reset">Reset Form</button>
+          <button class="ex-btn" id="ex-form-getdata">Get Data (console)</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { ContactForm } from './src/forms/ContactForm.js';
+
+const form = new ContactForm({
+  onSubmit: async (data) => {
+    await fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+  successMessage: 'Thanks! Message sent.',
+  fields: [
+    { name: 'name', type: 'text', label: 'Name',
+      required: true, minLength: 2 },
+    { name: 'email', type: 'email', label: 'Email',
+      required: true, email: true },
+    { name: 'message', type: 'textarea', label: 'Message',
+      required: true, minLength: 10, rows: 4 }
+  ]
+});
+
+container.appendChild(form.render());
+
+// Events
+form.on('submitted', ({ data }) => console.log(data));
+form.on('validationFailed', ({ fields }) => console.log(fields));
+
+// Programmatic
+form.setData({ name: 'Jane', email: 'jane@test.com' });
+form.reset();</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== ThemeManager ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">ThemeManager &amp; ThemeToggle</span>
+        <span class="ex-block__tag">Utility</span>
+      </div>
+      <div class="ex-block__preview">
+        <p style="margin-bottom: 1rem; color: var(--fc-text-muted, #6b7280); font-size: 0.9rem;">
+          Current theme: <strong id="ex-theme-current">loading...</strong>
+        </p>
+        <div class="ex-controls" style="border-top: none; padding-top: 0; margin-top: 0;">
+          <button class="ex-btn ex-btn--primary" id="ex-theme-toggle-btn">Toggle Theme</button>
+          <button class="ex-btn" id="ex-theme-light">Force Light</button>
+          <button class="ex-btn" id="ex-theme-dark">Force Dark</button>
+          <button class="ex-btn" id="ex-theme-custom">Apply Custom Theme</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { ThemeManager } from './src/theme/ThemeManager.js';
+
+const theme = new ThemeManager({
+  defaultTheme: 'light',
+  respectSystemPreference: true,
+  transitionDuration: 200
+});
+
+theme.toggle();
+theme.setTheme('dark');
+theme.isDark(); // true
+
+// Register a custom theme
+theme.registerTheme('ocean', {
+  '--fc-primary': '#0ea5e9',
+  '--fc-background': '#0c1222',
+  '--fc-surface': '#162032',
+  '--fc-text': '#e0f2fe',
+  '--fc-text-muted': '#7dd3fc',
+  '--fc-border': '#1e3a5f',
+});
+theme.setTheme('ocean');
+
+// Listen for changes
+theme.on('themeChange', ({ theme }) => {
+  console.log('Now using:', theme);
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== EventEmitter ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">EventEmitter</span>
+        <span class="ex-block__tag">Core</span>
+      </div>
+      <div class="ex-block__preview">
+        <p style="color: var(--fc-text-muted, #6b7280); font-size: 0.9rem; margin-bottom: 0.75rem;">
+          Open browser console to see events fire.
+        </p>
+        <div id="ex-emitter-log" style="font-family: monospace; font-size: 0.8rem; background: #1e293b; color: #94a3b8; padding: 1rem; border-radius: 8px; max-height: 150px; overflow-y: auto;"></div>
+        <div class="ex-controls">
+          <button class="ex-btn ex-btn--primary" id="ex-emit-data">Emit 'data'</button>
+          <button class="ex-btn" id="ex-emit-ping">Emit 'ping'</button>
+          <button class="ex-btn" id="ex-emit-clear">Remove All Listeners</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { EventEmitter } from './src/core/EventEmitter.js';
+
+const emitter = new EventEmitter();
+
+emitter.on('data', (payload) => {
+  console.log('Received:', payload);
+});
+
+emitter.once('init', () => {
+  console.log('Fired once only');
+});
+
+emitter.emit('data', { id: 1, value: 'hello' });
+emitter.emit('init');
+emitter.emit('init'); // won't fire
+
+emitter.removeAllListeners();</code></pre>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="ex-footer">
+    <div class="container">
+      <a href="index.html">Demo</a> &middot; <a href="docs.html">Docs</a> &middot; <a href="examples.html">Examples</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { ThemeManager } from './src/theme/ThemeManager.js';
+    import { ThemeToggle } from './src/theme/ThemeToggle.js';
+    import { ProjectCard } from './src/components/ProjectCard.js';
+    import SkillGroup from './src/components/SkillGroup.js';
+    import Timeline from './src/components/Timeline.js';
+    import { ContactForm } from './src/forms/ContactForm.js';
+    import { EventEmitter } from './src/core/EventEmitter.js';
+
+    // --- Code toggle ---
+    document.querySelectorAll('.ex-block__code-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const codeBlock = btn.closest('.ex-block__code');
+        codeBlock.classList.toggle('open');
+        btn.textContent = codeBlock.classList.contains('open') ? 'Hide Code' : 'Show Code';
+      });
+    });
+
+    // --- Theme ---
+    const themeManager = new ThemeManager();
+    new ThemeToggle(themeManager, { container: document.getElementById('theme-toggle') });
+
+    const themeLabel = document.getElementById('ex-theme-current');
+    const updateThemeLabel = () => { themeLabel.textContent = themeManager.getCurrentTheme(); };
+    themeManager.on('themeChange', updateThemeLabel);
+    updateThemeLabel();
+
+    document.getElementById('ex-theme-toggle-btn').addEventListener('click', () => themeManager.toggle());
+    document.getElementById('ex-theme-light').addEventListener('click', () => themeManager.setTheme('light'));
+    document.getElementById('ex-theme-dark').addEventListener('click', () => themeManager.setTheme('dark'));
+    document.getElementById('ex-theme-custom').addEventListener('click', () => {
+      themeManager.registerTheme('ocean', {
+        '--fc-primary': '#0ea5e9',
+        '--fc-primary-dark': '#0284c7',
+        '--fc-background': '#0c1222',
+        '--fc-surface': '#162032',
+        '--fc-text': '#e0f2fe',
+        '--fc-text-muted': '#7dd3fc',
+        '--fc-border': '#1e3a5f',
+        '--fc-shadow': 'rgba(0,0,0,0.4)',
+        '--fc-card-bg': '#162032',
+        '--fc-tag-bg': '#1e3a5f',
+        '--fc-tag-color': '#7dd3fc',
+      });
+      themeManager.setTheme('ocean');
+    });
+
+    // --- ProjectCard ---
+    const cardContainer = document.getElementById('ex-cards');
+    const demoCards = [];
+    let cardCounter = 0;
+
+    const sampleProjects = [
+      { title: 'Portfolio Site', description: 'Personal portfolio built with FolioCraft.', tags: ['HTML', 'CSS', 'JS'], links: { demo: '#' } },
+      { title: 'Chat App', description: 'Real-time messaging with WebSockets.', tags: ['React', 'Node.js', 'Socket.io'], links: { demo: '#', source: '#' } },
+      { title: 'CLI Tool', description: 'Developer productivity from the terminal.', tags: ['Python', 'Click'], links: { source: '#' } },
+    ];
+
+    function addCard(project) {
+      const card = new ProjectCard(project);
+      cardContainer.appendChild(card.render());
+      card.reveal();
+      demoCards.push(card);
+    }
+
+    sampleProjects.forEach(p => addCard(p));
+
+    document.getElementById('ex-card-add').addEventListener('click', () => {
+      cardCounter++;
+      addCard({
+        title: `New Project ${cardCounter}`,
+        description: 'Dynamically added card.',
+        tags: ['Dynamic', `#${cardCounter}`],
+        links: { source: '#' }
+      });
+    });
+
+    document.getElementById('ex-card-reveal').addEventListener('click', () => {
+      demoCards.forEach((c, i) => {
+        c.element.style.opacity = '0';
+        c.element.style.transform = 'translateY(30px)';
+        c.isRevealed = false;
+        setTimeout(() => c.reveal(), i * 100);
+      });
+    });
+
+    document.getElementById('ex-card-featured').addEventListener('click', () => {
+      if (demoCards[0]) {
+        const isFeatured = demoCards[0].element.classList.contains('fc-project-card--featured');
+        demoCards[0].update({ featured: !isFeatured });
+      }
+    });
+
+    document.getElementById('ex-card-update').addEventListener('click', () => {
+      if (demoCards[0]) {
+        demoCards[0].update({
+          title: 'Updated! ' + new Date().toLocaleTimeString(),
+          description: 'This card was updated programmatically.',
+          tags: ['Updated', 'Dynamic']
+        });
+      }
+    });
+
+    // --- SkillGroup ---
+    const skillsData1 = [
+      { name: 'JavaScript', level: 92, color: '#f0db4f' },
+      { name: 'TypeScript', level: 80, color: '#3178c6' },
+      { name: 'Python', level: 85, color: '#3776ab' },
+      { name: 'Go', level: 55, color: '#00add8' },
+    ];
+
+    const skillsData2 = [
+      { name: 'React', level: 88, color: '#61dafb' },
+      { name: 'Vue.js', level: 72, color: '#42b883' },
+      { name: 'Svelte', level: 60, color: '#ff3e00' },
+      { name: 'CSS', level: 90, color: '#2965f1' },
+    ];
+
+    const group1 = new SkillGroup({ title: 'Languages', skills: skillsData1 });
+    const group2 = new SkillGroup({ title: 'Frameworks', skills: skillsData2 });
+    document.getElementById('ex-skills-1').appendChild(group1.render());
+    document.getElementById('ex-skills-2').appendChild(group2.render());
+
+    document.getElementById('ex-skill-randomize').addEventListener('click', () => {
+      group1.skillBars.forEach(bar => bar.updateLevel(Math.floor(Math.random() * 60) + 40));
+      group2.skillBars.forEach(bar => bar.updateLevel(Math.floor(Math.random() * 60) + 40));
+    });
+
+    document.getElementById('ex-skill-sort-desc').addEventListener('click', () => {
+      group1.sortByLevel('desc');
+      group2.sortByLevel('desc');
+    });
+
+    document.getElementById('ex-skill-sort-alpha').addEventListener('click', () => {
+      group1.sortAlphabetically('asc');
+      group2.sortAlphabetically('asc');
+    });
+
+    let addedSkillCount = 0;
+    document.getElementById('ex-skill-add').addEventListener('click', () => {
+      addedSkillCount++;
+      const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#8b5cf6'];
+      group1.addSkill({
+        name: `Skill ${addedSkillCount}`,
+        level: Math.floor(Math.random() * 50) + 50,
+        color: colors[addedSkillCount % colors.length]
+      });
+    });
+
+    const filterSlider = document.getElementById('ex-skill-filter');
+    const filterVal = document.getElementById('ex-skill-filter-val');
+    filterSlider.addEventListener('input', () => {
+      const min = parseInt(filterSlider.value);
+      filterVal.textContent = min;
+      group1.filterByLevel(min);
+      group2.filterByLevel(min);
+    });
+
+    // --- Timeline ---
+    const tlEntries = [
+      { title: 'Lead Engineer', subtitle: 'BigCo', date: '2024', dateEnd: 'Present', description: 'Architecting the next-gen platform.', tags: ['Architecture', 'Leadership'], dotColor: '#3b82f6' },
+      { title: 'Senior Dev', subtitle: 'StartupABC', date: '2021', dateEnd: '2024', description: 'Built the product from zero to launch.', tags: ['React', 'AWS'], dotColor: '#10b981' },
+      { title: 'Junior Dev', subtitle: 'Agency Co', date: '2019', dateEnd: '2021', description: 'Delivered client projects on deadline.', tags: ['HTML', 'CSS', 'JS'], dotColor: '#8b5cf6' },
+    ];
+
+    let currentLayout = 'left';
+    let isCompact = false;
+
+    function renderTimeline() {
+      const container = document.getElementById('ex-timeline');
+      container.innerHTML = '';
+      const tl = new Timeline({ layout: currentLayout, compact: isCompact, entries: tlEntries, animated: false });
+      tl.mount(container);
+    }
+
+    renderTimeline();
+
+    document.getElementById('ex-tl-layout').addEventListener('change', (e) => {
+      currentLayout = e.target.value;
+      renderTimeline();
+    });
+
+    document.getElementById('ex-tl-compact').addEventListener('click', () => {
+      isCompact = !isCompact;
+      renderTimeline();
+    });
+
+    document.getElementById('ex-tl-add').addEventListener('click', () => {
+      const colors = ['#ef4444', '#f97316', '#06b6d4', '#ec4899'];
+      tlEntries.push({
+        title: 'New Role ' + tlEntries.length,
+        subtitle: 'Company ' + tlEntries.length,
+        date: String(2019 - tlEntries.length + 3),
+        dateEnd: String(2019 - tlEntries.length + 4),
+        description: 'Dynamically added entry.',
+        tags: ['New'],
+        dotColor: colors[tlEntries.length % colors.length]
+      });
+      renderTimeline();
+    });
+
+    document.getElementById('ex-tl-clear').addEventListener('click', () => {
+      tlEntries.length = 0;
+      renderTimeline();
+    });
+
+    // --- ContactForm ---
+    const form = new ContactForm({
+      onSubmit: async (data) => {
+        await new Promise(r => setTimeout(r, 1500));
+        console.log('Form submitted:', data);
+      }
+    });
+    document.getElementById('ex-form').appendChild(form.render());
+
+    document.getElementById('ex-form-prefill').addEventListener('click', () => {
+      form.setData({
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        subject: 'Hello from FolioCraft',
+        message: 'This data was set programmatically using form.setData()!'
+      });
+    });
+
+    document.getElementById('ex-form-reset').addEventListener('click', () => form.reset());
+    document.getElementById('ex-form-getdata').addEventListener('click', () => {
+      console.log('Form data:', form.getData());
+      alert('Check your browser console for form data.');
+    });
+
+    // --- EventEmitter ---
+    const emitter = new EventEmitter();
+    const logEl = document.getElementById('ex-emitter-log');
+    let logLines = [];
+
+    function addLog(msg) {
+      const time = new Date().toLocaleTimeString();
+      logLines.push(`<span style="color:#64748b;">[${time}]</span> ${msg}`);
+      if (logLines.length > 20) logLines.shift();
+      logEl.innerHTML = logLines.join('<br>');
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    emitter.on('data', (payload) => {
+      addLog(`<span style="color:#86efac;">data</span> → ${JSON.stringify(payload)}`);
+    });
+
+    emitter.on('ping', () => {
+      addLog(`<span style="color:#93c5fd;">ping</span> → pong!`);
+    });
+
+    addLog('<span style="color:#64748b;">Listeners registered for "data" and "ping"</span>');
+
+    let emitCounter = 0;
+    document.getElementById('ex-emit-data').addEventListener('click', () => {
+      emitCounter++;
+      emitter.emit('data', { id: emitCounter, ts: Date.now() });
+    });
+
+    document.getElementById('ex-emit-ping').addEventListener('click', () => {
+      emitter.emit('ping');
+    });
+
+    document.getElementById('ex-emit-clear').addEventListener('click', () => {
+      emitter.removeAllListeners();
+      addLog('<span style="color:#fca5a5;">All listeners removed. Buttons won\'t fire events now.</span>');
+    });
+  </script>
+</body>
+</html>
