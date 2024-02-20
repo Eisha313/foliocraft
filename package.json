@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/foliocraft.js",
   "module": "src/index.js",
+  "types": "types/foliocraft.d.ts",
   "files": [
     "dist",
     "src"

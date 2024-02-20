@@ -254,6 +254,27 @@ body.fc-theme-dark {
   opacity: 1;
 }
 
+/* Placeholder (when no image) */
+.fc-project-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fc-project-card__placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.15) 0%, transparent 60%);
+}
+
+.fc-project-card__placeholder-icon {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.7);
+}
+
 /* Content */
 .fc-project-card__content {
   padding: var(--fc-card-padding, 1.5rem);
@@ -1103,7 +1124,598 @@ body.fc-theme-dark {
 }
 
 /* ==========================================================================
-   14. UTILITY CLASSES
+   14. ANIMATION UTILITY CLASSES
+   Add these classes to any element. They start hidden and animate in
+   when ScrollAnimator adds .fc-animate-in, or use [data-fc-animation].
+   ========================================================================== */
+
+/* Base: elements with animation classes start hidden */
+[data-fc-animation],
+.fc-fade-in, .fc-fade-up, .fc-fade-down,
+.fc-fade-left, .fc-fade-right, .fc-scale-in {
+  opacity: 0;
+}
+
+/* Triggered state */
+[data-fc-animation].fc-animate-in,
+.fc-fade-in.fc-animate-in { animation: fc-fade-in 0.6s ease both; }
+.fc-fade-up.fc-animate-in,
+[data-fc-animation="fade-up"].fc-animate-in { animation: fc-fade-slide-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+.fc-fade-down.fc-animate-in,
+[data-fc-animation="fade-down"].fc-animate-in { animation: fc-fade-slide-down 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+.fc-fade-left.fc-animate-in,
+[data-fc-animation="fade-left"].fc-animate-in { animation: fc-slide-in-left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+.fc-fade-right.fc-animate-in,
+[data-fc-animation="fade-right"].fc-animate-in { animation: fc-slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+.fc-scale-in.fc-animate-in,
+[data-fc-animation="scale-in"].fc-animate-in { animation: fc-scale-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+@keyframes fc-fade-slide-down {
+  from { opacity: 0; transform: translateY(-24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fc-scale-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Stagger delays */
+.fc-delay-100 { animation-delay: 100ms !important; }
+.fc-delay-200 { animation-delay: 200ms !important; }
+.fc-delay-300 { animation-delay: 300ms !important; }
+.fc-delay-400 { animation-delay: 400ms !important; }
+.fc-delay-500 { animation-delay: 500ms !important; }
+
+/* Duration modifiers */
+.fc-duration-fast   { animation-duration: 300ms !important; }
+.fc-duration-normal { animation-duration: 600ms !important; }
+.fc-duration-slow   { animation-duration: 1000ms !important; }
+
+/* Hover micro-interactions */
+.fc-hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.fc-hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px var(--fc-shadow, rgba(0,0,0,0.15)); }
+
+.fc-hover-glow { transition: box-shadow 0.2s ease; }
+.fc-hover-glow:hover { box-shadow: 0 0 24px var(--fc-primary, #3498db)40; }
+
+.fc-hover-scale { transition: transform 0.2s ease; }
+.fc-hover-scale:hover { transform: scale(1.05); }
+
+/* ==========================================================================
+   15. HERO SECTION — .fc-hero
+   ========================================================================== */
+
+.fc-hero {
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.fc-hero__container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.fc-hero--split {
+  text-align: left;
+}
+
+.fc-hero--split .fc-hero__container {
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.fc-hero--minimal {
+  padding: 8rem 2rem 6rem;
+}
+
+.fc-hero__avatar-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.fc-hero__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--fc-primary, #3498db);
+  box-shadow: 0 0 0 4px var(--fc-background, #fff), 0 0 0 6px var(--fc-primary, #3498db)40;
+}
+
+.fc-hero--split .fc-hero__avatar {
+  width: 128px;
+  height: 128px;
+}
+
+.fc-hero__headline {
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: var(--fc-text, #1f2937);
+}
+
+.fc-hero__subheadline {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--fc-text-muted, #6b7280);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.fc-hero__description {
+  font-size: 1rem;
+  color: var(--fc-text-muted, #6b7280);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+.fc-hero:not(.fc-hero--split) .fc-hero__description {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fc-hero__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.fc-hero:not(.fc-hero--split) .fc-hero__actions {
+  justify-content: center;
+}
+
+.fc-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem 1.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.fc-hero__cta--primary {
+  background: var(--fc-primary, #3498db);
+  color: #fff;
+}
+
+.fc-hero__cta--primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.fc-hero__cta--secondary {
+  background: transparent;
+  color: var(--fc-text, #1f2937);
+  border: 1.5px solid var(--fc-border, #e5e7eb);
+}
+
+.fc-hero__cta--secondary:hover {
+  border-color: var(--fc-primary, #3498db);
+  color: var(--fc-primary, #3498db);
+}
+
+/* ==========================================================================
+   16. STATS COUNTER — .fc-stats
+   ========================================================================== */
+
+.fc-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  padding: 2.5rem 2rem;
+  flex-wrap: wrap;
+}
+
+.fc-stats--grid {
+  display: grid;
+  grid-template-columns: repeat(var(--fc-stats-columns, 4), 1fr);
+  gap: 2rem;
+}
+
+.fc-stats__item {
+  text-align: center;
+}
+
+.fc-stats__value {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--fc-primary, #3498db);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.fc-stats__label {
+  font-size: 0.8rem;
+  color: var(--fc-text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   17. SOCIAL LINKS — .fc-socials
+   ========================================================================== */
+
+.fc-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fc-socials--sm .fc-socials__link { width: 32px; height: 32px; }
+.fc-socials--md .fc-socials__link { width: 40px; height: 40px; }
+.fc-socials--lg .fc-socials__link { width: 48px; height: 48px; }
+
+.fc-socials__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: var(--fc-text-muted, #6b7280);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.fc-socials__link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Styles */
+.fc-socials--filled .fc-socials__link {
+  background: var(--fc-surface, #f3f4f6);
+}
+
+.fc-socials--outline .fc-socials__link {
+  border: 1.5px solid var(--fc-border, #e5e7eb);
+}
+
+.fc-socials--ghost .fc-socials__link {
+  background: transparent;
+}
+
+.fc-socials__link:hover {
+  color: var(--fc-primary, #3498db);
+  background: var(--fc-primary, #3498db)10;
+  transform: translateY(-2px);
+}
+
+.fc-hero .fc-socials {
+  justify-content: center;
+}
+
+.fc-hero--split .fc-socials {
+  justify-content: flex-start;
+}
+
+/* ==========================================================================
+   18. NAVBAR — .fc-navbar
+   ========================================================================== */
+
+.fc-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--fc-background, #fff);
+  border-bottom: 1px solid var(--fc-border, #e5e7eb);
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.fc-navbar--scrolled {
+  box-shadow: 0 1px 8px var(--fc-shadow, rgba(0,0,0,0.08));
+}
+
+.fc-navbar--transparent {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.fc-navbar--transparent.fc-navbar--scrolled {
+  background: var(--fc-background, #fff);
+  border-bottom-color: var(--fc-border, #e5e7eb);
+}
+
+.fc-navbar__container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.fc-navbar__brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--fc-text, #1f2937);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.fc-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fc-navbar__links a {
+  color: var(--fc-text-muted, #6b7280);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.fc-navbar__links a:hover,
+.fc-navbar__link--active {
+  color: var(--fc-primary, #3498db);
+}
+
+.fc-navbar__link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--fc-primary, #3498db);
+  border-radius: 1px;
+}
+
+.fc-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fc-navbar__hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.fc-navbar__hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--fc-text, #1f2937);
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+@media (max-width: 768px) {
+  .fc-navbar__links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--fc-background, #fff);
+    border-bottom: 1px solid var(--fc-border, #e5e7eb);
+    padding: 1rem 2rem;
+    gap: 0.75rem;
+    box-shadow: 0 8px 16px var(--fc-shadow, rgba(0,0,0,0.1));
+  }
+
+  .fc-navbar--open .fc-navbar__links { display: flex; }
+  .fc-navbar__hamburger { display: flex; }
+
+  .fc-navbar--open .fc-navbar__hamburger span:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+  }
+  .fc-navbar--open .fc-navbar__hamburger span:nth-child(2) { opacity: 0; }
+  .fc-navbar--open .fc-navbar__hamburger span:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+  }
+}
+
+/* ==========================================================================
+   19. FOOTER — .fc-footer
+   ========================================================================== */
+
+.fc-footer {
+  border-top: 1px solid var(--fc-border, #e5e7eb);
+  padding: 3rem 2rem 1.5rem;
+  transition: border-color 0.3s;
+}
+
+.fc-footer__container {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.fc-footer__brand-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fc-text, #1f2937);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.fc-footer__tagline {
+  font-size: 0.85rem;
+  color: var(--fc-text-muted, #6b7280);
+  margin: 0;
+}
+
+.fc-footer__links {
+  display: flex;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fc-footer__links a {
+  color: var(--fc-text-muted, #6b7280);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.fc-footer__links a:hover {
+  color: var(--fc-primary, #3498db);
+}
+
+.fc-footer__bottom {
+  max-width: 1080px;
+  margin: 2rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--fc-border, #e5e7eb);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fc-footer__copyright {
+  font-size: 0.8rem;
+  color: var(--fc-text-muted, #6b7280);
+  margin: 0;
+}
+
+.fc-footer__badge {
+  font-size: 0.7rem;
+  color: var(--fc-text-muted, #6b7280);
+}
+
+.fc-footer__badge a {
+  color: var(--fc-primary, #3498db);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   20. BACK TO TOP — .fc-back-to-top
+   ========================================================================== */
+
+.fc-back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--fc-border, #e5e7eb);
+  background: var(--fc-background, #fff);
+  color: var(--fc-text-muted, #6b7280);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px var(--fc-shadow, rgba(0,0,0,0.1));
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s, transform 0.3s, background-color 0.2s;
+  pointer-events: none;
+}
+
+.fc-back-to-top--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.fc-back-to-top:hover {
+  background: var(--fc-primary, #3498db);
+  color: #fff;
+  border-color: var(--fc-primary, #3498db);
+}
+
+.fc-back-to-top svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ==========================================================================
+   21. PORTFOLIO BUILDER — .fc-portfolio
+   ========================================================================== */
+
+.fc-portfolio {
+  min-height: 100vh;
+}
+
+.fc-portfolio__section {
+  padding: 5rem 2rem;
+}
+
+.fc-portfolio__section + .fc-portfolio__section {
+  border-top: 1px solid var(--fc-border, #e5e7eb);
+}
+
+.fc-portfolio__section-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.fc-portfolio__section-header {
+  margin-bottom: 2.5rem;
+}
+
+.fc-portfolio__section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.fc-portfolio__section-header p {
+  color: var(--fc-text-muted, #6b7280);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.fc-portfolio__projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.fc-portfolio__skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+/* ==========================================================================
+   22. UTILITY CLASSES
    ========================================================================== */
 
 .fc-sr-only {

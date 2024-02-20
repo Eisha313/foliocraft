@@ -29,8 +29,16 @@ const modules = [
   'components/SkillGroup.js',
   'components/TimelineEntry.js',
   'components/Timeline.js',
+  'components/HeroSection.js',
+  'components/StatsCounter.js',
+  'components/SocialLinks.js',
+  'components/Navbar.js',
+  'components/Footer.js',
+  'components/BackToTop.js',
   'forms/FormValidator.js',
   'forms/ContactForm.js',
+  'theme/presets.js',
+  'portfolio/PortfolioBuilder.js',
 ];
 
 // Public API — classes to expose on the FolioCraft namespace
@@ -53,6 +61,15 @@ const publicExports = [
   'Timeline',
   'FormValidator',
   'ContactForm',
+  'HeroSection',
+  'StatsCounter',
+  'SocialLinks',
+  'Navbar',
+  'Footer',
+  'BackToTop',
+  'PortfolioBuilder',
+  'themePresets',
+  'themePresetsDark',
   'easings',
 ];
 
