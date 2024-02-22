@@ -288,6 +288,9 @@
         <a href="#skill-bar">SkillBar</a>
         <a href="#skill-group">SkillGroup</a>
         <a href="#timeline">Timeline</a>
+        <a href="#hero-section">HeroSection</a>
+        <a href="#stats-counter">StatsCounter</a>
+        <a href="#navbar">Navbar</a>
         <a href="#contact-form">ContactForm</a>
         <a href="#theme-toggle">ThemeToggle</a>
 
@@ -297,14 +300,19 @@
         <a href="#breakpoint-manager">BreakpointManager</a>
         <a href="#form-validator">FormValidator</a>
 
+        <div class="docs-sidebar__heading">Portfolio Builder</div>
+        <a href="#create-portfolio">createPortfolio()</a>
+        <a href="#theme-presets">Theme Presets</a>
+
         <div class="docs-sidebar__heading">Advanced</div>
         <a href="#css-variables">CSS Variables</a>
+        <a href="#animation-utils">Animation Utilities</a>
         <a href="#building">Building</a>
       </nav>
 
       <div class="docs-sidebar__actions">
         <a href="index.html">&#8592; Live Demo</a>
-        <a href="examples.html">Examples</a>
+        <a href="examples.html">&#9654; Examples</a>
         <a href="#" id="docs-theme-toggle">Toggle Theme</a>
       </div>
     </aside>
@@ -808,6 +816,151 @@ v.setMessages({ required: <span class="code-string">'This cannot be blank'</span
       <p>Built-in validators: <code>required</code>, <code>email</code>, <code>phone</code>, <code>url</code>, <code>minLength</code>, <code>maxLength</code>, <code>pattern</code>, <code>custom</code>.</p>
 
       <!-- ============================================================ -->
+      <h2 id="hero-section">HeroSection</h2>
+      <p>The hero/landing section for your portfolio. Supports centered, split, and minimal layouts with staggered entrance animations.</p>
+
+      <h4>Options</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>headline</code></td><td>string</td><td><code>''</code></td><td>Main heading (rendered as h1)</td></tr>
+          <tr><td><code>subheadline</code></td><td>string</td><td><code>''</code></td><td>Secondary text below headline</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td><code>''</code></td><td>Paragraph description</td></tr>
+          <tr><td><code>avatar</code></td><td>string</td><td><code>null</code></td><td>Profile photo URL</td></tr>
+          <tr><td><code>cta</code></td><td>object</td><td><code>null</code></td><td><code>{ text, href, secondary?: { text, href } }</code></td></tr>
+          <tr><td><code>socials</code></td><td>array</td><td><code>[]</code></td><td>Social links: <code>[{ platform, url }]</code></td></tr>
+          <tr><td><code>layout</code></td><td>string</td><td><code>'centered'</code></td><td><code>'centered'</code>, <code>'split'</code>, or <code>'minimal'</code></td></tr>
+          <tr><td><code>animated</code></td><td>boolean</td><td><code>true</code></td><td>Staggered entrance animations</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ============================================================ -->
+      <h2 id="stats-counter">StatsCounter</h2>
+      <p>Animated counting numbers that trigger on scroll. Perfect for showcasing achievements.</p>
+
+<pre><code><span class="code-keyword">const</span> stats = <span class="code-keyword">new</span> <span class="code-class">StatsCounter</span>({
+  stats: [
+    { value: <span class="code-number">50</span>, label: <span class="code-string">'Projects'</span>, suffix: <span class="code-string">'+'</span> },
+    { value: <span class="code-number">30</span>, label: <span class="code-string">'Clients'</span>, suffix: <span class="code-string">'+'</span> },
+    { value: <span class="code-number">5</span>,  label: <span class="code-string">'Years Experience'</span> },
+  ],
+  duration: <span class="code-number">2000</span>
+});</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="navbar">Navbar</h2>
+      <p>Responsive sticky navigation with scroll-based effects, mobile hamburger menu, and theme toggle slot.</p>
+
+<pre><code><span class="code-keyword">const</span> nav = <span class="code-keyword">new</span> <span class="code-class">Navbar</span>({
+  brand: <span class="code-string">'Alex Chen'</span>,
+  links: [
+    { text: <span class="code-string">'Projects'</span>, href: <span class="code-string">'#projects'</span> },
+    { text: <span class="code-string">'Skills'</span>, href: <span class="code-string">'#skills'</span> },
+    { text: <span class="code-string">'Contact'</span>, href: <span class="code-string">'#contact'</span> },
+  ],
+  sticky: <span class="code-keyword">true</span>,
+  transparent: <span class="code-keyword">true</span>
+});
+
+<span class="code-comment">// Mount a ThemeToggle in the nav's slot</span>
+<span class="code-keyword">new</span> <span class="code-class">ThemeToggle</span>(themeManager, {
+  container: nav.getThemeSlot()
+});</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="create-portfolio">createPortfolio()</h2>
+      <p>The killer feature. One function call generates an entire portfolio website from a config object — navbar, hero, projects, skills, timeline, contact form, footer, and theme. Everything wired up with smooth scrolling and animations.</p>
+
+<pre><code><span class="code-keyword">import</span> { createPortfolio } <span class="code-keyword">from</span> <span class="code-string">'foliocraft'</span>;
+
+<span class="code-keyword">const</span> portfolio = createPortfolio({
+  target: <span class="code-string">'#app'</span>,
+  theme: <span class="code-string">'developer'</span>,
+
+  hero: {
+    headline: <span class="code-string">'I build things for the web.'</span>,
+    subheadline: <span class="code-string">'Full-stack developer &amp; open source contributor.'</span>,
+    cta: { text: <span class="code-string">'View My Work'</span>, href: <span class="code-string">'#fc-projects'</span> },
+    socials: [
+      { platform: <span class="code-string">'github'</span>, url: <span class="code-string">'https://github.com/you'</span> },
+      { platform: <span class="code-string">'linkedin'</span>, url: <span class="code-string">'https://linkedin.com/in/you'</span> },
+    ]
+  },
+
+  stats: [
+    { value: <span class="code-number">50</span>, label: <span class="code-string">'Projects'</span>, suffix: <span class="code-string">'+'</span> },
+    { value: <span class="code-number">5</span>,  label: <span class="code-string">'Years'</span> },
+  ],
+
+  projects: [
+    {
+      title: <span class="code-string">'My App'</span>,
+      description: <span class="code-string">'Something amazing I built.'</span>,
+      tags: [<span class="code-string">'React'</span>, <span class="code-string">'Node.js'</span>],
+      links: { demo: <span class="code-string">'https://myapp.com'</span>, source: <span class="code-string">'https://github.com/...'</span> }
+    }
+  ],
+
+  skills: [{
+    title: <span class="code-string">'Tech Stack'</span>,
+    skills: [
+      { name: <span class="code-string">'JavaScript'</span>, level: <span class="code-number">95</span>, color: <span class="code-string">'#f0db4f'</span> },
+      { name: <span class="code-string">'React'</span>, level: <span class="code-number">90</span>, color: <span class="code-string">'#61dafb'</span> },
+    ]
+  }],
+
+  experience: [
+    {
+      title: <span class="code-string">'Senior Dev'</span>,
+      subtitle: <span class="code-string">'Acme Corp'</span>,
+      date: <span class="code-string">'2023'</span>,
+      dateEnd: <span class="code-string">'Present'</span>,
+      description: <span class="code-string">'Leading the frontend team.'</span>,
+      tags: [<span class="code-string">'React'</span>, <span class="code-string">'TypeScript'</span>]
+    }
+  ],
+
+  contact: {
+    onSubmit: <span class="code-keyword">async</span> (data) =&gt; {
+      <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/contact'</span>, {
+        method: <span class="code-string">'POST'</span>,
+        body: JSON.stringify(data)
+      });
+    }
+  }
+});
+
+<span class="code-comment">// Change theme later</span>
+portfolio.setTheme(<span class="code-string">'bold'</span>);
+
+<span class="code-comment">// Access individual components</span>
+portfolio.getComponent(<span class="code-string">'timeline'</span>);
+
+<span class="code-comment">// Clean up</span>
+portfolio.destroy();</code></pre>
+
+      <!-- ============================================================ -->
+      <h2 id="theme-presets">Theme Presets</h2>
+      <p>Five built-in theme presets beyond light/dark. Apply them via <code>createPortfolio({ theme: 'developer' })</code> or register them manually:</p>
+
+      <table>
+        <thead><tr><th>Preset</th><th>Style</th><th>Primary Color</th></tr></thead>
+        <tbody>
+          <tr><td><code>minimal</code></td><td>Clean whites, grays, thin borders</td><td><code>#111827</code></td></tr>
+          <tr><td><code>developer</code></td><td>GitHub-dark inspired, code-friendly</td><td><code>#58a6ff</code></td></tr>
+          <tr><td><code>bold</code></td><td>Vibrant purple, strong shadows</td><td><code>#8b5cf6</code></td></tr>
+          <tr><td><code>creative</code></td><td>Warm amber tones, playful</td><td><code>#f59e0b</code></td></tr>
+          <tr><td><code>elegant</code></td><td>Gold accents, refined feel</td><td><code>#b8860b</code></td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-keyword">import</span> { themePresets } <span class="code-keyword">from</span> <span class="code-string">'foliocraft'</span>;
+
+<span class="code-comment">// Register a preset manually</span>
+themeManager.registerTheme(<span class="code-string">'developer'</span>, themePresets.developer);
+themeManager.setTheme(<span class="code-string">'developer'</span>);</code></pre>
+
+      <!-- ============================================================ -->
       <h2 id="css-variables">CSS Variables</h2>
       <p>FolioCraft is fully themeable via CSS custom properties. Override any variable in your own stylesheet:</p>
 
@@ -847,6 +1000,47 @@ v.setMessages({ required: <span class="code-string">'This cannot be blank'</span
           <tr><td><code>--fc-focus-color</code></td><td>Focus ring color</td></tr>
         </tbody>
       </table>
+
+      <!-- ============================================================ -->
+      <!-- ============================================================ -->
+      <h2 id="animation-utils">Animation Utilities</h2>
+      <p>CSS utility classes for scroll-triggered animations. Add them to any element and use <code>ScrollAnimator</code> to trigger — or just add <code>data-fc-animation</code> attributes.</p>
+
+      <h3>Entrance Animations</h3>
+      <table>
+        <thead><tr><th>Class / Attribute</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>fc-fade-in</code> / <code>data-fc-animation="fade-in"</code></td><td>Fade in (opacity only)</td></tr>
+          <tr><td><code>fc-fade-up</code> / <code>data-fc-animation="fade-up"</code></td><td>Fade + slide up</td></tr>
+          <tr><td><code>fc-fade-down</code> / <code>data-fc-animation="fade-down"</code></td><td>Fade + slide down</td></tr>
+          <tr><td><code>fc-fade-left</code> / <code>data-fc-animation="fade-left"</code></td><td>Fade + slide from left</td></tr>
+          <tr><td><code>fc-fade-right</code> / <code>data-fc-animation="fade-right"</code></td><td>Fade + slide from right</td></tr>
+          <tr><td><code>fc-scale-in</code> / <code>data-fc-animation="scale-in"</code></td><td>Fade + scale up</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Delay & Duration Modifiers</h3>
+<pre><code><span class="code-comment">&lt;!-- Stagger elements --&gt;</span>
+&lt;div class="fc-fade-up"&gt;First&lt;/div&gt;
+&lt;div class="fc-fade-up fc-delay-200"&gt;Second (200ms delay)&lt;/div&gt;
+&lt;div class="fc-fade-up fc-delay-400"&gt;Third (400ms delay)&lt;/div&gt;
+
+<span class="code-comment">&lt;!-- Slow animation --&gt;</span>
+&lt;div class="fc-scale-in fc-duration-slow"&gt;Dramatic entrance&lt;/div&gt;</code></pre>
+
+      <h3>Hover Micro-interactions</h3>
+      <table>
+        <thead><tr><th>Class</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>fc-hover-lift</code></td><td>Lift up 4px + shadow on hover</td></tr>
+          <tr><td><code>fc-hover-glow</code></td><td>Primary color glow on hover</td></tr>
+          <tr><td><code>fc-hover-scale</code></td><td>Scale to 1.05x on hover</td></tr>
+        </tbody>
+      </table>
+
+<pre><code><span class="code-comment">&lt;!-- Add to any element --&gt;</span>
+&lt;div class="fc-hover-lift"&gt;I float on hover&lt;/div&gt;
+&lt;button class="fc-hover-glow"&gt;I glow on hover&lt;/button&gt;</code></pre>
 
       <!-- ============================================================ -->
       <h2 id="building">Building</h2>

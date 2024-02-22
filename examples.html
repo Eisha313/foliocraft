@@ -538,6 +538,144 @@ emitter.removeAllListeners();</code></pre>
       </div>
     </div>
 
+    <!-- ========== HeroSection ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">HeroSection</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div id="ex-hero" style="border: 1px solid var(--fc-border, #e5e7eb); border-radius: 8px; overflow: hidden;"></div>
+        <div class="ex-controls">
+          <label class="ex-label">
+            Layout:
+            <select id="ex-hero-layout">
+              <option value="centered" selected>Centered</option>
+              <option value="split">Split</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </label>
+          <button class="ex-btn" id="ex-hero-replay">Replay Animation</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { HeroSection } from './src/components/HeroSection.js';
+
+const hero = new HeroSection({
+  headline: 'I build things for the web.',
+  subheadline: 'Full-stack developer & designer.',
+  cta: { text: 'View Work', href: '#projects',
+         secondary: { text: 'Contact', href: '#contact' } },
+  socials: [
+    { platform: 'github', url: '#' },
+    { platform: 'linkedin', url: '#' },
+  ],
+  layout: 'centered', // 'centered', 'split', 'minimal'
+  animated: true
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== StatsCounter ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">StatsCounter</span>
+        <span class="ex-block__tag">Component</span>
+      </div>
+      <div class="ex-block__preview">
+        <div id="ex-stats"></div>
+        <div class="ex-controls">
+          <button class="ex-btn ex-btn--primary" id="ex-stats-replay">Replay Count Animation</button>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { StatsCounter } from './src/components/StatsCounter.js';
+
+const stats = new StatsCounter({
+  stats: [
+    { value: 50, label: 'Projects', suffix: '+' },
+    { value: 30, label: 'Clients', suffix: '+' },
+    { value: 5, label: 'Years' },
+    { value: 12, label: 'Repos' },
+  ],
+  duration: 2000
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== createPortfolio ========== -->
+    <div class="ex-block">
+      <div class="ex-block__header">
+        <span class="ex-block__title">createPortfolio()</span>
+        <span class="ex-block__tag" style="background: #10b981;">Builder</span>
+      </div>
+      <div class="ex-block__preview">
+        <p style="color: var(--fc-text-muted, #6b7280); font-size: 0.9rem; margin-bottom: 1rem;">
+          One function call builds an entire portfolio. The <a href="index.html" style="color: var(--fc-primary, #3498db);">live demo</a> is built entirely with <code>createPortfolio()</code>.
+        </p>
+        <div class="ex-controls" style="border-top: none; padding-top: 0; margin-top: 0;">
+          <label class="ex-label">
+            Theme Preset:
+            <select id="ex-portfolio-theme">
+              <option value="light">Light (default)</option>
+              <option value="dark">Dark</option>
+              <option value="minimal">Minimal</option>
+              <option value="developer">Developer</option>
+              <option value="bold">Bold</option>
+              <option value="creative">Creative</option>
+              <option value="elegant">Elegant</option>
+            </select>
+          </label>
+          <a href="index.html" class="ex-btn ex-btn--primary" target="_blank">Open Full Demo</a>
+        </div>
+      </div>
+      <div class="ex-block__code">
+        <button class="ex-block__code-toggle">Show Code</button>
+<pre><code>import { createPortfolio } from 'foliocraft';
+
+const portfolio = createPortfolio({
+  target: '#app',
+  theme: 'developer',
+
+  hero: {
+    headline: 'I build things for the web.',
+    cta: { text: 'View Work', href: '#fc-projects' },
+    socials: [{ platform: 'github', url: '#' }]
+  },
+
+  stats: [
+    { value: 50, label: 'Projects', suffix: '+' },
+  ],
+
+  projects: [
+    { title: 'My App', description: 'Something cool.',
+      tags: ['React'], links: { demo: '#' } }
+  ],
+
+  skills: [
+    { title: 'Frontend',
+      skills: [{ name: 'JS', level: 95, color: '#f0db4f' }] }
+  ],
+
+  experience: [
+    { title: 'Senior Dev', subtitle: 'Acme',
+      date: '2023', dateEnd: 'Present' }
+  ],
+
+  contact: {
+    onSubmit: async (data) => await fetch('/api', {
+      method: 'POST', body: JSON.stringify(data)
+    })
+  }
+});
+
+// Change theme later
+portfolio.setTheme('bold');</code></pre>
+      </div>
+    </div>
+
   </main>
 
   <footer class="ex-footer">
@@ -554,6 +692,9 @@ emitter.removeAllListeners();</code></pre>
     import Timeline from './src/components/Timeline.js';
     import { ContactForm } from './src/forms/ContactForm.js';
     import { EventEmitter } from './src/core/EventEmitter.js';
+    import { HeroSection } from './src/components/HeroSection.js';
+    import { StatsCounter } from './src/components/StatsCounter.js';
+    import { themePresets } from './src/theme/presets.js';
 
     // --- Code toggle ---
     document.querySelectorAll('.ex-block__code-toggle').forEach(btn => {
@@ -812,6 +953,80 @@ emitter.removeAllListeners();</code></pre>
     document.getElementById('ex-emit-clear').addEventListener('click', () => {
       emitter.removeAllListeners();
       addLog('<span style="color:#fca5a5;">All listeners removed. Buttons won\'t fire events now.</span>');
+    });
+
+    // --- HeroSection ---
+    let heroLayout = 'centered';
+    function renderHero() {
+      const container = document.getElementById('ex-hero');
+      container.innerHTML = '';
+      const hero = new HeroSection({
+        headline: 'I build things for the web.',
+        subheadline: 'Full-stack developer specializing in React, Node.js, and cloud architecture.',
+        cta: {
+          text: 'View My Work',
+          href: '#',
+          secondary: { text: 'Get In Touch', href: '#' }
+        },
+        socials: [
+          { platform: 'github', url: '#' },
+          { platform: 'linkedin', url: '#' },
+          { platform: 'twitter', url: '#' },
+        ],
+        layout: heroLayout,
+        animated: true
+      });
+      container.appendChild(hero.render());
+    }
+    renderHero();
+
+    document.getElementById('ex-hero-layout').addEventListener('change', (e) => {
+      heroLayout = e.target.value;
+      renderHero();
+    });
+
+    document.getElementById('ex-hero-replay').addEventListener('click', () => {
+      renderHero();
+    });
+
+    // --- StatsCounter ---
+    const statsContainer = document.getElementById('ex-stats');
+    let statsInstance = new StatsCounter({
+      stats: [
+        { value: 50, label: 'Projects Shipped', suffix: '+' },
+        { value: 30, label: 'Happy Clients', suffix: '+' },
+        { value: 5, label: 'Years Experience' },
+        { value: 12, label: 'Open Source Repos' },
+      ],
+      animated: false,
+      duration: 2000
+    });
+    statsContainer.appendChild(statsInstance.render());
+
+    document.getElementById('ex-stats-replay').addEventListener('click', () => {
+      statsContainer.innerHTML = '';
+      statsInstance = new StatsCounter({
+        stats: [
+          { value: 50, label: 'Projects Shipped', suffix: '+' },
+          { value: 30, label: 'Happy Clients', suffix: '+' },
+          { value: 5, label: 'Years Experience' },
+          { value: 12, label: 'Open Source Repos' },
+        ],
+        animated: true,
+        duration: 2000
+      });
+      statsContainer.appendChild(statsInstance.render());
+    });
+
+    // --- createPortfolio theme switcher ---
+    document.getElementById('ex-portfolio-theme').addEventListener('change', (e) => {
+      const preset = e.target.value;
+      if (preset === 'light' || preset === 'dark') {
+        themeManager.setTheme(preset);
+      } else if (themePresets[preset]) {
+        themeManager.registerTheme(preset, themePresets[preset]);
+        themeManager.setTheme(preset);
+      }
     });
   </script>
 </body>
